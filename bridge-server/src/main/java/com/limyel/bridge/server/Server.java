@@ -1,6 +1,9 @@
 package com.limyel.bridge.server;
 
+import com.limyel.bridge.common.codec.PacketDecoder;
+import com.limyel.bridge.common.codec.PacketEncoder;
 import com.limyel.bridge.common.handler.IMIdleStateHandler;
+import com.limyel.bridge.server.handler.HeartBeatRequestHandler;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
@@ -10,6 +13,7 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 
 import java.util.Date;
+import java.util.PropertyPermission;
 
 public class Server {
 
@@ -37,6 +41,9 @@ public class Server {
                             protected void initChannel(SocketChannel ch) throws Exception {
                                 ChannelPipeline pipeline = ch.pipeline();
                                 pipeline.addLast(new IMIdleStateHandler());
+                                pipeline.addLast(new PacketDecoder());
+                                pipeline.addLast(new PacketEncoder());
+                                pipeline.addLast(HeartBeatRequestHandler.INSTANCE);
                             }
                         });
                     }
