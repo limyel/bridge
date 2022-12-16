@@ -13,7 +13,6 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 
 import java.util.Date;
-import java.util.PropertyPermission;
 
 public class Server {
 
@@ -42,6 +41,7 @@ public class Server {
                                 ChannelPipeline pipeline = ch.pipeline();
                                 pipeline.addLast(new IMIdleStateHandler());
                                 pipeline.addLast(new PacketDecoder());
+
                                 pipeline.addLast(new PacketEncoder());
                                 pipeline.addLast(HeartBeatRequestHandler.INSTANCE);
                             }

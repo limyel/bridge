@@ -2,19 +2,17 @@ package com.limyel.bridge.client;
 
 
 import com.limyel.bridge.client.handler.HeartBeatTimerHandler;
-import com.limyel.bridge.client.handler.RegisterResponseHandler;
 import com.limyel.bridge.common.codec.PacketDecoder;
 import com.limyel.bridge.common.codec.PacketEncoder;
 import com.limyel.bridge.common.handler.IMIdleStateHandler;
 import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 
+import javax.activation.DataHandler;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
@@ -42,10 +40,9 @@ public class Client {
                         pipeline.addLast(new IMIdleStateHandler());
                         pipeline.addLast(new PacketDecoder());
 
-                        pipeline.addLast(new RegisterResponseHandler());
+                        pipeline.addLast(new HeartBeatTimerHandler());
 
                         pipeline.addLast(new PacketEncoder());
-                        pipeline.addLast(new HeartBeatTimerHandler());
                     }
                 });
     }

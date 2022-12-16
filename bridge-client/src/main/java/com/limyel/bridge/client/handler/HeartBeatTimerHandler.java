@@ -8,7 +8,7 @@ import java.util.concurrent.TimeUnit;
 
 public class HeartBeatTimerHandler extends ChannelInboundHandlerAdapter {
 
-    private static final int HEARTBEAT_INTERVAL = 15;
+    private static final int HEARTBEAT_INTERVAL = 30;
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
@@ -19,7 +19,7 @@ public class HeartBeatTimerHandler extends ChannelInboundHandlerAdapter {
     private void scheduleSendHeartBeat(ChannelHandlerContext ctx) {
         ctx.executor().schedule(() -> {
             if (ctx.channel().isActive()) {
-                ctx.writeAndFlush(new HeartBeatRequestPacket());
+                ctx.channel().writeAndFlush(new HeartBeatRequestPacket());
                 scheduleSendHeartBeat(ctx);
             }
         }, HEARTBEAT_INTERVAL, TimeUnit.SECONDS);

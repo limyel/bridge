@@ -10,4 +10,9 @@ public class CommandConstant {
 
     public static final byte HEART_BEAT_RESPONSE = 4;
 
+    public static final byte DATA = 5;
+
+    public static final byte PROXY_CONNECT_REQUEST = 6;
+
+    public static final byte PROXY_CONNECT_RESPONSE = 7;
 }

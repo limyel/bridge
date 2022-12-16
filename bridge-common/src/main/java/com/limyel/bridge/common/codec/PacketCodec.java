@@ -3,8 +3,11 @@ package com.limyel.bridge.common.codec;
 import com.limyel.bridge.common.constant.CommandConstant;
 import com.limyel.bridge.common.constant.SerializeAlgorithmConstant;
 import com.limyel.bridge.common.protocol.AbstractPacket;
+import com.limyel.bridge.common.protocol.common.DataPacket;
 import com.limyel.bridge.common.protocol.request.HeartBeatRequestPacket;
+import com.limyel.bridge.common.protocol.request.RegisterRequestPacket;
 import com.limyel.bridge.common.protocol.response.HeartBeatResponsePacket;
+import com.limyel.bridge.common.protocol.response.RegisterResponsePacket;
 import com.limyel.bridge.common.serializer.Serializer;
 import com.limyel.bridge.common.serializer.impl.JSONSerializer;
 import io.netty.buffer.ByteBuf;
@@ -27,8 +30,11 @@ public class PacketCodec {
 
     private PacketCodec() {
         packetTypeMap = new HashMap<>();
+        packetTypeMap.put(CommandConstant.REGISTER_REQUEST, RegisterRequestPacket.class);
+        packetTypeMap.put(CommandConstant.REGISTER_RESPONSE, RegisterResponsePacket.class);
         packetTypeMap.put(CommandConstant.HEART_BEAT_REQUEST, HeartBeatRequestPacket.class);
         packetTypeMap.put(CommandConstant.HEART_BEAT_RESPONSE, HeartBeatResponsePacket.class);
+        packetTypeMap.put(CommandConstant.DATA, DataPacket.class);
 
         serializerMap = new HashMap<>();
         serializerMap.put(JSONSerializer.INSTANCE.getSerializeAlgorithm(), JSONSerializer.INSTANCE);
