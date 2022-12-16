@@ -18,6 +18,6 @@ public class RegisterResponseHandler extends SimpleChannelInboundHandler<Registe
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, RegisterResponsePacket responsePacket) throws Exception {
-
+        System.out.println(responsePacket.getChannelId());
     }
 }

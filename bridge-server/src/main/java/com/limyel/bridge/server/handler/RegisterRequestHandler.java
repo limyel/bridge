@@ -1,6 +1,8 @@
 package com.limyel.bridge.server.handler;
 
 import com.limyel.bridge.common.protocol.request.RegisterRequestPacket;
+import com.limyel.bridge.common.protocol.response.RegisterResponsePacket;
+import com.limyel.bridge.server.utils.ProxyChannelGroup;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInitializer;
@@ -17,6 +19,8 @@ import java.util.Date;
 public class RegisterRequestHandler extends SimpleChannelInboundHandler<RegisterRequestPacket> {
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, RegisterRequestPacket requestPacket) throws Exception {
+        RegisterResponsePacket responsePacket = new RegisterResponsePacket();
+
         ServerBootstrap proxyServerBootstrap = new ServerBootstrap();
         NioEventLoopGroup bossGroup = new NioEventLoopGroup();
         NioEventLoopGroup workerGroup = new NioEventLoopGroup();
@@ -33,6 +37,8 @@ public class RegisterRequestHandler extends SimpleChannelInboundHandler<Register
                                 ChannelPipeline pipeline = ch.pipeline();
                                 pipeline.addLast(new ByteArrayDecoder());
                                 pipeline.addLast(new ByteArrayEncoder());
+
+                                ProxyChannelGroup.INSTANCE.channelGroup.add(ch);
                             }
                         });
                     }
