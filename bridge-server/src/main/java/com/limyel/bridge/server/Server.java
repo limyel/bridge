@@ -2,9 +2,12 @@ package com.limyel.bridge.server;
 
 import com.limyel.bridge.common.codec.PacketDecoder;
 import com.limyel.bridge.common.codec.PacketEncoder;
+import com.limyel.bridge.common.codec.Spliter;
 import com.limyel.bridge.common.handler.IMIdleStateHandler;
+import com.limyel.bridge.server.handler.DataHandler;
 import com.limyel.bridge.server.handler.HeartBeatRequestHandler;
 import com.limyel.bridge.server.handler.RegisterRequestHandler;
+import com.limyel.bridge.server.utils.ProxyChannelGroup;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
@@ -41,12 +44,16 @@ public class Server {
                             protected void initChannel(SocketChannel ch) throws Exception {
                                 ChannelPipeline pipeline = ch.pipeline();
                                 pipeline.addLast(new IMIdleStateHandler());
+                                pipeline.addLast(new Spliter());
                                 pipeline.addLast(new PacketDecoder());
 
                                 pipeline.addLast(new RegisterRequestHandler());
+                                pipeline.addLast(new DataHandler());
 
                                 pipeline.addLast(new PacketEncoder());
                                 pipeline.addLast(HeartBeatRequestHandler.INSTANCE);
+
+                                ProxyChannelGroup.INSTANCE.serverChannel = ch;
                             }
                         });
                     }

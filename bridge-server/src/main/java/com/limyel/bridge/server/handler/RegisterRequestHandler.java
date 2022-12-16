@@ -2,6 +2,7 @@ package com.limyel.bridge.server.handler;
 
 import com.limyel.bridge.common.protocol.request.RegisterRequestPacket;
 import com.limyel.bridge.common.protocol.response.RegisterResponsePacket;
+import com.limyel.bridge.server.handler.proxy.DataHandler;
 import com.limyel.bridge.server.utils.ProxyChannelGroup;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelHandlerContext;
@@ -36,6 +37,9 @@ public class RegisterRequestHandler extends SimpleChannelInboundHandler<Register
                             protected void initChannel(SocketChannel ch) throws Exception {
                                 ChannelPipeline pipeline = ch.pipeline();
                                 pipeline.addLast(new ByteArrayDecoder());
+
+                                pipeline.addLast(new DataHandler());
+
                                 pipeline.addLast(new ByteArrayEncoder());
 
                                 ProxyChannelGroup.INSTANCE.channelGroup.add(ch);
