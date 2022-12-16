@@ -2,6 +2,7 @@ package com.limyel.bridge.client;
 
 
 import com.limyel.bridge.client.handler.HeartBeatTimerHandler;
+import com.limyel.bridge.client.handler.RegisterResponseHandler;
 import com.limyel.bridge.common.codec.PacketDecoder;
 import com.limyel.bridge.common.codec.PacketEncoder;
 import com.limyel.bridge.common.handler.IMIdleStateHandler;
@@ -40,6 +41,7 @@ public class Client {
                         pipeline.addLast(new IMIdleStateHandler());
                         pipeline.addLast(new PacketDecoder());
 
+                        pipeline.addLast(new RegisterResponseHandler());
                         pipeline.addLast(new HeartBeatTimerHandler());
 
                         pipeline.addLast(new PacketEncoder());

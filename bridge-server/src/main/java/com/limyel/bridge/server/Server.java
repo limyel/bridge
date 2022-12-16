@@ -4,6 +4,7 @@ import com.limyel.bridge.common.codec.PacketDecoder;
 import com.limyel.bridge.common.codec.PacketEncoder;
 import com.limyel.bridge.common.handler.IMIdleStateHandler;
 import com.limyel.bridge.server.handler.HeartBeatRequestHandler;
+import com.limyel.bridge.server.handler.RegisterRequestHandler;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
@@ -41,6 +42,8 @@ public class Server {
                                 ChannelPipeline pipeline = ch.pipeline();
                                 pipeline.addLast(new IMIdleStateHandler());
                                 pipeline.addLast(new PacketDecoder());
+
+                                pipeline.addLast(new RegisterRequestHandler());
 
                                 pipeline.addLast(new PacketEncoder());
                                 pipeline.addLast(HeartBeatRequestHandler.INSTANCE);
