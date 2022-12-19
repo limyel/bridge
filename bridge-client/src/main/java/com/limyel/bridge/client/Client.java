@@ -7,9 +7,11 @@ import com.limyel.bridge.client.handler.RegisterResponseHandler;
 import com.limyel.bridge.client.utils.LocalChannelGroup;
 import com.limyel.bridge.common.codec.PacketDecoder;
 import com.limyel.bridge.common.codec.PacketEncoder;
+import com.limyel.bridge.common.codec.Spliter;
 import com.limyel.bridge.common.handler.IMIdleStateHandler;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelOption;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
@@ -22,7 +24,7 @@ public class Client {
 
     private final int MAX_RETRY = 5;
 
-    private final String HOST = "127.0.0.1";
+    private final String HOST = "192.168.31.32";
 
     private final int PORT = 9876;
 
@@ -35,11 +37,13 @@ public class Client {
         bootstrap
                 .group(group)
                 .channel(NioSocketChannel.class)
+                .option(ChannelOption.SO_KEEPALIVE, true)
                 .handler(new ChannelInitializer<SocketChannel>() {
                     @Override
                     protected void initChannel(SocketChannel ch) throws Exception {
                         ChannelPipeline pipeline = ch.pipeline();
                         pipeline.addLast(new IMIdleStateHandler());
+                        pipeline.addLast(new Spliter());
                         pipeline.addLast(new PacketDecoder());
 
                         pipeline.addLast(new RegisterResponseHandler());
@@ -58,25 +62,29 @@ public class Client {
     }
 
     private void connect(String host, int port, int retry) {
-        bootstrap.connect(host, port).addListener(future -> {
-            if (future.isSuccess()) {
-                return;
-            } else if (retry == 0) {
-                System.err.println("重试次数已用完，放弃连接！");
-            } else {
-                // 重试次数
-                int order = MAX_RETRY - retry + 1;
-                // 本次重连间隔
-                int delay = 1 << order;
-                System.err.println(new Date() + "：连接失败，第" + order + "次重连...");
-                // 返回 BootstrapConfig
-                bootstrap.config()
-                        // 返回线程模型 group
-                        .group()
-                        // 执行定时任务
-                        .schedule(() -> connect(host, port, retry - 1), delay, TimeUnit.SECONDS);
-            }
-        });
+        try {
+            bootstrap.connect(host, port).addListener(future -> {
+                if (future.isSuccess()) {
+                    return;
+                } else if (retry == 0) {
+                    System.err.println("重试次数已用完，放弃连接！");
+                } else {
+                    // 重试次数
+                    int order = MAX_RETRY - retry + 1;
+                    // 本次重连间隔
+                    int delay = 1 << order;
+                    System.err.println(new Date() + "：连接失败，第" + order + "次重连...");
+                    // 返回 BootstrapConfig
+                    bootstrap.config()
+                            // 返回线程模型 group
+                            .group()
+                            // 执行定时任务
+                            .schedule(() -> connect(host, port, retry - 1), delay, TimeUnit.SECONDS);
+                }
+            }).sync();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }

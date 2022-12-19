@@ -1,30 +1,22 @@
 package com.limyel.bridge.client.handler;
 
-import com.limyel.bridge.client.handler.local.Datahandler;
+import com.limyel.bridge.client.handler.local.DataHandler;
 import com.limyel.bridge.client.utils.LocalChannelGroup;
-import com.limyel.bridge.common.codec.PacketDecoder;
-import com.limyel.bridge.common.codec.PacketEncoder;
-import com.limyel.bridge.common.handler.IMIdleStateHandler;
-import com.limyel.bridge.common.protocol.request.ConnectRequestPacket;
 import com.limyel.bridge.common.protocol.request.RegisterRequestPacket;
 import com.limyel.bridge.common.protocol.response.RegisterResponsePacket;
 import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelPipeline;
-import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.bytes.ByteArrayDecoder;
 import io.netty.handler.codec.bytes.ByteArrayEncoder;
-import org.omg.CORBA.portable.ResponseHandler;
 
 public class RegisterResponseHandler extends SimpleChannelInboundHandler<RegisterResponsePacket> {
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        RegisterRequestPacket requestPacket = new RegisterRequestPacket("192.168.31.32", 8000, 7001);
+        RegisterRequestPacket requestPacket = new RegisterRequestPacket("192.168.31.32", 5173, 25173);
         ctx.channel().writeAndFlush(requestPacket);
         super.channelActive(ctx);
     }
@@ -39,19 +31,29 @@ public class RegisterResponseHandler extends SimpleChannelInboundHandler<Registe
         localBootstrap
                 .group(group)
                 .channel(NioSocketChannel.class)
+                .option(ChannelOption.SO_KEEPALIVE, true)
                 .handler(new ChannelInitializer<SocketChannel>() {
                     @Override
                     protected void initChannel(SocketChannel ch) throws Exception {
                         ChannelPipeline pipeline = ch.pipeline();
 
                         pipeline.addLast(new ByteArrayDecoder());
-                        pipeline.addLast(new Datahandler());
                         pipeline.addLast(new ByteArrayEncoder());
+                        pipeline.addLast(new DataHandler(responsePacket.getChannelId()));
 
-                        pipeline.addLast(new ByteArrayEncoder());
-
-                        LocalChannelGroup.INSTANCE.localChannel = ch;
+                        LocalChannelGroup.INSTANCE.channelGroup.add(ch);
+                        LocalChannelGroup.INSTANCE.channelMap.put(responsePacket.getChannelId(), ch);
                     }
-                }).connect("192.168.31.32", 8000);
+                }).connect("192.168.31.32", 5173).addListener(future -> {
+                    if (!future.isSuccess()) {
+                        future.cause().printStackTrace();
+                    }
+                }).sync();
     }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        cause.printStackTrace();
+    }
+
 }

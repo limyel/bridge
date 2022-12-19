@@ -7,6 +7,8 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelId;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 
+import java.nio.charset.StandardCharsets;
+
 public class DataHandler extends ChannelInboundHandlerAdapter {
 
     @Override
@@ -30,4 +32,10 @@ public class DataHandler extends ChannelInboundHandlerAdapter {
 
         ProxyChannelGroup.INSTANCE.serverChannel.writeAndFlush(dataPacket);
     }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        cause.printStackTrace();
+    }
+
 }

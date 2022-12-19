@@ -13,6 +13,8 @@ public class ProxyChannelGroup {
 
     public Channel serverChannel;
 
+    public Channel proxyChannel;
+
     private ProxyChannelGroup() {
         channelGroup = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
     }

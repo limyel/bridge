@@ -36,11 +36,10 @@ public class RegisterRequestHandler extends SimpleChannelInboundHandler<Register
                             @Override
                             protected void initChannel(SocketChannel ch) throws Exception {
                                 ChannelPipeline pipeline = ch.pipeline();
+
                                 pipeline.addLast(new ByteArrayDecoder());
-
-                                pipeline.addLast(new DataHandler());
-
                                 pipeline.addLast(new ByteArrayEncoder());
+                                pipeline.addLast(new DataHandler());
 
                                 ProxyChannelGroup.INSTANCE.channelGroup.add(ch);
                             }
@@ -50,6 +49,12 @@ public class RegisterRequestHandler extends SimpleChannelInboundHandler<Register
                     if (future.isSuccess()) {
                         System.out.println(new Date() + ": 端口[" + requestPacket.getRemotePort() + "]绑定成功！");
                     }
-                });
+                }).sync();
     }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        cause.printStackTrace();
+    }
+
 }

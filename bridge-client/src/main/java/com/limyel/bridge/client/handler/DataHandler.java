@@ -8,6 +8,12 @@ import io.netty.channel.SimpleChannelInboundHandler;
 public class DataHandler extends SimpleChannelInboundHandler<DataPacket> {
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, DataPacket dataPacket) throws Exception {
-        LocalChannelGroup.INSTANCE.localChannel.writeAndFlush(dataPacket.getData());
+        LocalChannelGroup.INSTANCE.channelMap.get(dataPacket.getChannelId()).writeAndFlush(dataPacket.getData());
     }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        cause.printStackTrace();
+    }
+
 }

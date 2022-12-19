@@ -19,4 +19,10 @@ public class HeartBeatRequestHandler extends SimpleChannelInboundHandler<HeartBe
     protected void channelRead0(ChannelHandlerContext ctx, HeartBeatRequestPacket requestPacket) throws Exception {
         ctx.writeAndFlush(new HeartBeatResponsePacket());
     }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        cause.printStackTrace();
+    }
+
 }

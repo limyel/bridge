@@ -10,6 +10,7 @@ import com.limyel.bridge.server.handler.RegisterRequestHandler;
 import com.limyel.bridge.server.utils.ProxyChannelGroup;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelOption;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
@@ -36,6 +37,7 @@ public class Server {
                 .group(bossGroup, workerGroup)
                 // 指定 IO 模型
                 .channel(NioServerSocketChannel.class)
+                .childOption(ChannelOption.SO_KEEPALIVE, true)
                 .childHandler(new ChannelInitializer<NioSocketChannel>() {
                     @Override
                     protected void initChannel(NioSocketChannel ch) throws Exception {
@@ -65,14 +67,18 @@ public class Server {
     }
 
     private void bind(final int port) {
-        serverBootstrap.bind(port).addListener(future -> {
-            if (future.isSuccess()) {
-                System.out.println(new Date() + ": 端口[" + port + "]绑定成功！");
-            } else {
-                System.err.println("端口[" + port + "]绑定失败，尝试下一个端口。");
-                bind(port + 1);
-            }
-        });
+        try {
+            serverBootstrap.bind(port).addListener(future -> {
+                if (future.isSuccess()) {
+                    System.out.println(new Date() + ": 端口[" + port + "]绑定成功！");
+                } else {
+                    System.err.println("端口[" + port + "]绑定失败，尝试下一个端口。");
+                    bind(port + 1);
+                }
+            }).sync();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }
