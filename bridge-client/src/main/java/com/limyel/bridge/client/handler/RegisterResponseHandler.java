@@ -1,9 +1,9 @@
 package com.limyel.bridge.client.handler;
 
 import com.limyel.bridge.client.handler.local.DataHandler;
-import com.limyel.bridge.client.utils.LocalChannelGroup;
 import com.limyel.bridge.common.protocol.request.RegisterRequestPacket;
 import com.limyel.bridge.common.protocol.response.RegisterResponsePacket;
+import com.limyel.bridge.common.utils.ChannelUtil;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -16,15 +16,13 @@ public class RegisterResponseHandler extends SimpleChannelInboundHandler<Registe
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        RegisterRequestPacket requestPacket = new RegisterRequestPacket("192.168.31.32", 5173, 25173);
+        RegisterRequestPacket requestPacket = new RegisterRequestPacket("192.168.31.98", 5173, 25173);
         ctx.channel().writeAndFlush(requestPacket);
         super.channelActive(ctx);
     }
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, RegisterResponsePacket responsePacket) throws Exception {
-        LocalChannelGroup.INSTANCE.channelId = responsePacket.getChannelId();
-
         Bootstrap localBootstrap = new io.netty.bootstrap.Bootstrap();
         NioEventLoopGroup group = new NioEventLoopGroup();
 
@@ -41,10 +39,10 @@ public class RegisterResponseHandler extends SimpleChannelInboundHandler<Registe
                         pipeline.addLast(new ByteArrayEncoder());
                         pipeline.addLast(new DataHandler(responsePacket.getChannelId()));
 
-                        LocalChannelGroup.INSTANCE.channelGroup.add(ch);
-                        LocalChannelGroup.INSTANCE.channelMap.put(responsePacket.getChannelId(), ch);
+                        ChannelUtil.getInstance().getChannelGroup().add(ch);
+                        ChannelUtil.getInstance().getChannelMap().put(responsePacket.getChannelId(), ch);
                     }
-                }).connect("192.168.31.32", 5173).addListener(future -> {
+                }).connect("192.168.31.98", 5173).addListener(future -> {
                     if (!future.isSuccess()) {
                         future.cause().printStackTrace();
                     }

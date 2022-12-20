@@ -1,11 +1,9 @@
 package com.limyel.bridge.client.handler.local;
 
-import com.limyel.bridge.client.utils.LocalChannelGroup;
 import com.limyel.bridge.common.protocol.common.DataPacket;
+import com.limyel.bridge.common.utils.ChannelUtil;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-
-import java.nio.charset.StandardCharsets;
 
 public class DataHandler extends ChannelInboundHandlerAdapter {
 
@@ -23,7 +21,7 @@ public class DataHandler extends ChannelInboundHandlerAdapter {
         dataPacket.setChannelId(this.channelId);
         dataPacket.setData(data);
 
-        LocalChannelGroup.INSTANCE.clientChannel.writeAndFlush(dataPacket);
+        ChannelUtil.getInstance().getParentChannel().writeAndFlush(dataPacket);
     }
 
     @Override
