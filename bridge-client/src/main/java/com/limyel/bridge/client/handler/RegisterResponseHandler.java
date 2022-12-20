@@ -42,14 +42,13 @@ public class RegisterResponseHandler extends SimpleChannelInboundHandler<Registe
         localClient.connect(responsePacket.getLocalProxyHost(), responsePacket.getLocalProxyPort(), new ChannelInitializer<SocketChannel>() {
             @Override
             protected void initChannel(SocketChannel ch) throws Exception {
-                ChannelPipeline pipeline = ch.pipeline();
+                ChannelUtil.getInstance().getChannelGroup().add(ch);
+                ChannelUtil.getInstance().getChannelMap().put(responsePacket.getChannelId(), ch);
 
+                ChannelPipeline pipeline = ch.pipeline();
                 pipeline.addLast(new ByteArrayDecoder());
                 pipeline.addLast(new ByteArrayEncoder());
                 pipeline.addLast(new DataHandler(responsePacket.getChannelId()));
-
-                ChannelUtil.getInstance().getChannelGroup().add(ch);
-                ChannelUtil.getInstance().getChannelMap().put(responsePacket.getChannelId(), ch);
             }
         });
     }
