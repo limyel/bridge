@@ -12,16 +12,11 @@ import java.util.Optional;
 public class ServerConfig extends BridgeConfig {
 
     public ServerConfig() {
-        this(DefaultServerConfig.PATH);
+        this(DefaultServerConfig.CONFIG_PATH);
     }
 
     public ServerConfig(String path) {
-        try {
-            properties.load(Files.newInputStream(Paths.get(path)));
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
-        }
+        load(path);
     }
 
     public int getPort() {
