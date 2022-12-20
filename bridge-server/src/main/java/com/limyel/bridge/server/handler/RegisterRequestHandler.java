@@ -1,9 +1,8 @@
 package com.limyel.bridge.server.handler;
 
 import com.limyel.bridge.common.protocol.request.RegisterRequestPacket;
-import com.limyel.bridge.common.protocol.response.RegisterResponsePacket;
+import com.limyel.bridge.common.utils.ChannelUtil;
 import com.limyel.bridge.server.handler.proxy.DataHandler;
-import com.limyel.bridge.server.utils.ChannelUtil;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInitializer;

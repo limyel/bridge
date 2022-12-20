@@ -4,18 +4,15 @@ import com.limyel.bridge.common.codec.PacketDecoder;
 import com.limyel.bridge.common.codec.PacketEncoder;
 import com.limyel.bridge.common.codec.Spliter;
 import com.limyel.bridge.common.handler.IMIdleStateHandler;
+import com.limyel.bridge.common.utils.ChannelUtil;
 import com.limyel.bridge.server.config.ServerConfig;
 import com.limyel.bridge.server.handler.DataHandler;
 import com.limyel.bridge.server.handler.HeartBeatRequestHandler;
 import com.limyel.bridge.server.handler.RegisterRequestHandler;
 import com.limyel.bridge.server.net.BridgeServer;
-import com.limyel.bridge.server.utils.ChannelUtil;
-import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
-
-import java.util.Date;
 
 public class Server {
 
@@ -37,7 +34,7 @@ public class Server {
                 pipeline.addLast(new PacketEncoder());
                 pipeline.addLast(HeartBeatRequestHandler.getInstance());
 
-                ChannelUtil.getInstance().setServerChannel(ch);
+                ChannelUtil.getInstance().setParentChannel(ch);
             }
         });
     }
