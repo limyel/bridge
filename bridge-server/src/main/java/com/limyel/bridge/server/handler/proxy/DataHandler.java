@@ -2,12 +2,10 @@ package com.limyel.bridge.server.handler.proxy;
 
 import com.limyel.bridge.common.protocol.common.DataPacket;
 import com.limyel.bridge.common.protocol.response.RegisterResponsePacket;
-import com.limyel.bridge.server.utils.ProxyChannelGroup;
+import com.limyel.bridge.server.utils.ChannelUtil;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelId;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-
-import java.nio.charset.StandardCharsets;
 
 public class DataHandler extends ChannelInboundHandlerAdapter {
 
@@ -16,7 +14,7 @@ public class DataHandler extends ChannelInboundHandlerAdapter {
         RegisterResponsePacket responsePacket = new RegisterResponsePacket();
         responsePacket.setChannelId(ctx.channel().id().asLongText());
 
-        ProxyChannelGroup.INSTANCE.serverChannel.writeAndFlush(responsePacket);
+        ChannelUtil.getInstance().getServerChannel().writeAndFlush(responsePacket);
 
         super.channelActive(ctx);
     }
@@ -30,7 +28,7 @@ public class DataHandler extends ChannelInboundHandlerAdapter {
         dataPacket.setData(data);
         dataPacket.setChannelId(channelId.asLongText());
 
-        ProxyChannelGroup.INSTANCE.serverChannel.writeAndFlush(dataPacket);
+        ChannelUtil.getInstance().getServerChannel().writeAndFlush(dataPacket);
     }
 
     @Override

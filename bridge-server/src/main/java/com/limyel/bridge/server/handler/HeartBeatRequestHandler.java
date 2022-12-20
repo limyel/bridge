@@ -9,10 +9,21 @@ import io.netty.channel.SimpleChannelInboundHandler;
 @ChannelHandler.Sharable
 public class HeartBeatRequestHandler extends SimpleChannelInboundHandler<HeartBeatRequestPacket> {
 
-    public static final HeartBeatRequestHandler INSTANCE = new HeartBeatRequestHandler();
+    private static volatile HeartBeatRequestHandler INSTANCE;
 
     private HeartBeatRequestHandler() {
 
+    }
+
+    public static HeartBeatRequestHandler getInstance() {
+        if (INSTANCE == null) {
+            synchronized (HeartBeatRequestHandler.class) {
+                if (INSTANCE == null) {
+                    INSTANCE = new HeartBeatRequestHandler();
+                }
+            }
+        }
+        return INSTANCE;
     }
 
     @Override

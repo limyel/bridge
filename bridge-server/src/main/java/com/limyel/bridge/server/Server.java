@@ -4,81 +4,42 @@ import com.limyel.bridge.common.codec.PacketDecoder;
 import com.limyel.bridge.common.codec.PacketEncoder;
 import com.limyel.bridge.common.codec.Spliter;
 import com.limyel.bridge.common.handler.IMIdleStateHandler;
+import com.limyel.bridge.server.config.ServerConfig;
 import com.limyel.bridge.server.handler.DataHandler;
 import com.limyel.bridge.server.handler.HeartBeatRequestHandler;
 import com.limyel.bridge.server.handler.RegisterRequestHandler;
-import com.limyel.bridge.server.utils.ProxyChannelGroup;
+import com.limyel.bridge.server.net.BridgeServer;
+import com.limyel.bridge.server.utils.ChannelUtil;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelOption;
 import io.netty.channel.ChannelPipeline;
-import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
-import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.channel.socket.nio.NioSocketChannel;
 
 import java.util.Date;
 
 public class Server {
 
-    private final int PORT = 9876;
+    private BridgeServer bridgeServer;
 
-    private ServerBootstrap serverBootstrap;
+    public void start(ServerConfig config) {
+        BridgeServer bridgeServer = new BridgeServer();
+        bridgeServer.bind(config, new ChannelInitializer<SocketChannel>() {
+            @Override
+            protected void initChannel(SocketChannel ch) throws Exception {
+                ChannelPipeline pipeline = ch.pipeline();
+                pipeline.addLast(new IMIdleStateHandler());
+                pipeline.addLast(new Spliter());
+                pipeline.addLast(new PacketDecoder());
 
-    public Server() {
-        serverBootstrap = new ServerBootstrap();
+                pipeline.addLast(new RegisterRequestHandler());
+                pipeline.addLast(new DataHandler());
 
-        // 监听端口
-        NioEventLoopGroup bossGroup = new NioEventLoopGroup();
-        // 处理连接
-        NioEventLoopGroup workerGroup = new NioEventLoopGroup();
+                pipeline.addLast(new PacketEncoder());
+                pipeline.addLast(HeartBeatRequestHandler.getInstance());
 
-        serverBootstrap
-                .group(bossGroup, workerGroup)
-                // 指定 IO 模型
-                .channel(NioServerSocketChannel.class)
-                .childOption(ChannelOption.SO_KEEPALIVE, true)
-                .childHandler(new ChannelInitializer<NioSocketChannel>() {
-                    @Override
-                    protected void initChannel(NioSocketChannel ch) throws Exception {
-                        ch.pipeline().addLast(new ChannelInitializer<SocketChannel>() {
-                            @Override
-                            protected void initChannel(SocketChannel ch) throws Exception {
-                                ChannelPipeline pipeline = ch.pipeline();
-                                pipeline.addLast(new IMIdleStateHandler());
-                                pipeline.addLast(new Spliter());
-                                pipeline.addLast(new PacketDecoder());
-
-                                pipeline.addLast(new RegisterRequestHandler());
-                                pipeline.addLast(new DataHandler());
-
-                                pipeline.addLast(new PacketEncoder());
-                                pipeline.addLast(HeartBeatRequestHandler.INSTANCE);
-
-                                ProxyChannelGroup.INSTANCE.serverChannel = ch;
-                            }
-                        });
-                    }
-                });
-    }
-
-    public void start() {
-        bind(PORT);
-    }
-
-    private void bind(final int port) {
-        try {
-            serverBootstrap.bind(port).addListener(future -> {
-                if (future.isSuccess()) {
-                    System.out.println(new Date() + ": 端口[" + port + "]绑定成功！");
-                } else {
-                    System.err.println("端口[" + port + "]绑定失败，尝试下一个端口。");
-                    bind(port + 1);
-                }
-            }).sync();
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+                ChannelUtil.getInstance().setServerChannel(ch);
+            }
+        });
     }
 
 }
