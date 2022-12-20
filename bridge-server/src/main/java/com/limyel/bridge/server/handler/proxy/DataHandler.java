@@ -9,10 +9,13 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 
 public class DataHandler extends ChannelInboundHandlerAdapter {
 
+    // todo 激活，拆分？
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        String channelId = ctx.channel().id().asLongText();
         RegisterResponsePacket responsePacket = new RegisterResponsePacket();
-        responsePacket.setChannelId(ctx.channel().id().asLongText());
+        responsePacket.setHostPort(ChannelUtil.getInstance().getMap().get(channelId));
+        responsePacket.setChannelId(channelId);
 
         ChannelUtil.getInstance().getParentChannel().writeAndFlush(responsePacket);
 

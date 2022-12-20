@@ -1,11 +1,20 @@
 package com.limyel.bridge.server.net;
 
+import com.limyel.bridge.common.codec.PacketDecoder;
+import com.limyel.bridge.common.codec.PacketEncoder;
+import com.limyel.bridge.common.codec.Spliter;
 import com.limyel.bridge.common.config.BridgeConfig;
+import com.limyel.bridge.common.handler.IMIdleStateHandler;
+import com.limyel.bridge.common.utils.ChannelUtil;
 import com.limyel.bridge.server.config.ServerConfig;
+import com.limyel.bridge.server.handler.DataHandler;
+import com.limyel.bridge.server.handler.HeartBeatRequestHandler;
+import com.limyel.bridge.server.handler.RegisterRequestHandler;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
+import io.netty.channel.ChannelPipeline;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
@@ -16,13 +25,7 @@ public class BridgeServer {
 
     private Channel channel;
 
-    private void init(ServerConfig config) {
-
-    }
-
-    public void bind(ServerConfig config, ChannelInitializer<SocketChannel> channelInitializer) {
-        int port = config.getPort();
-
+    public void bind(int port, ChannelInitializer<SocketChannel> channelInitializer) {
         // 监听端口
         NioEventLoopGroup bossGroup = new NioEventLoopGroup();
         // 处理连接
@@ -33,8 +36,8 @@ public class BridgeServer {
             serverBootstrap
                     .group(bossGroup, workerGroup)
                     .channel(NioServerSocketChannel.class)
-                    .childHandler(channelInitializer)
-                    .childOption(ChannelOption.SO_KEEPALIVE, true);
+                    .childOption(ChannelOption.SO_KEEPALIVE, true)
+                    .childHandler(channelInitializer);
 
             channel = serverBootstrap
                     .bind(port)
@@ -46,13 +49,14 @@ public class BridgeServer {
                             throw new RuntimeException();
                         }
                     }).sync().channel();
-
+            System.out.println(channel.pipeline().names());
             channel.closeFuture().addListener(future -> {
                 workerGroup.shutdownGracefully();
                 bossGroup.shutdownGracefully();
             });
 
         } catch (InterruptedException e) {
+            e.printStackTrace();
             workerGroup.shutdownGracefully();
             bossGroup.shutdownGracefully();
             throw new RuntimeException(e);

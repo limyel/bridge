@@ -5,10 +5,13 @@ import com.limyel.bridge.common.utils.ChannelUtil;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+
 public class DataHandler extends SimpleChannelInboundHandler<DataPacket> {
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, DataPacket dataPacket) throws Exception {
-
+        System.out.println(new String(dataPacket.getData(), StandardCharsets.UTF_8));
         ChannelUtil.getInstance().getChannelGroup().writeAndFlush(dataPacket.getData(), channel -> channel.id().asLongText().equals(dataPacket.getChannelId()));
     }
 

@@ -16,11 +16,10 @@ import io.netty.channel.socket.SocketChannel;
 
 public class Server {
 
-    private BridgeServer bridgeServer;
-
     public void start(ServerConfig config) {
+        int port = config.getPort();
         BridgeServer bridgeServer = new BridgeServer();
-        bridgeServer.bind(config, new ChannelInitializer<SocketChannel>() {
+        bridgeServer.bind(port, new ChannelInitializer<SocketChannel>() {
             @Override
             protected void initChannel(SocketChannel ch) throws Exception {
                 ChannelPipeline pipeline = ch.pipeline();

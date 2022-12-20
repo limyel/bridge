@@ -5,6 +5,8 @@ import com.limyel.bridge.common.utils.ChannelUtil;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 
+import java.nio.charset.StandardCharsets;
+
 public class DataHandler extends ChannelInboundHandlerAdapter {
 
     private String channelId;
@@ -16,6 +18,8 @@ public class DataHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         byte[] data = (byte[]) msg;
+
+        System.out.println(new String(data, StandardCharsets.UTF_8));
 
         DataPacket dataPacket = new DataPacket();
         dataPacket.setChannelId(this.channelId);

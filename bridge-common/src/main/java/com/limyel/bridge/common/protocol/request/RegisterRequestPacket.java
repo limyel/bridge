@@ -15,20 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 public class RegisterRequestPacket extends AbstractPacket {
 
-    /**
-     * 被代理的地址
-     */
-    private String proxyAddr;
-
-    /**
-     * 被代理的端口
-     */
-    private int proxyPort;
-
-    /**
-     * 远程暴露的端口
-     */
-    private int remotePort;
+    private List<RegisterItem> registerItemList;
 
     @Override
     public Byte getCommand() {

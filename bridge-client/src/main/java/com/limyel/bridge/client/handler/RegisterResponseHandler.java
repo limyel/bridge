@@ -1,6 +1,10 @@
 package com.limyel.bridge.client.handler;
 
+import com.limyel.bridge.client.config.ClientConfig;
+import com.limyel.bridge.client.entity.ProxyInfo;
 import com.limyel.bridge.client.handler.local.DataHandler;
+import com.limyel.bridge.client.net.BridgeClient;
+import com.limyel.bridge.common.protocol.request.RegisterItem;
 import com.limyel.bridge.common.protocol.request.RegisterRequestPacket;
 import com.limyel.bridge.common.protocol.response.RegisterResponsePacket;
 import com.limyel.bridge.common.utils.ChannelUtil;
@@ -12,41 +16,42 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.bytes.ByteArrayDecoder;
 import io.netty.handler.codec.bytes.ByteArrayEncoder;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 public class RegisterResponseHandler extends SimpleChannelInboundHandler<RegisterResponsePacket> {
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        RegisterRequestPacket requestPacket = new RegisterRequestPacket("192.168.31.98", 5173, 25173);
+        List<ProxyInfo> proxyInfoList = ClientConfig.getInstance().getProxyInfo();
+        List<RegisterItem> registerItemList = proxyInfoList.stream().map(proxyInfo -> {
+            RegisterItem item = new RegisterItem();
+            item.setRemotePort(proxyInfo.getRemoteProxyPort());
+            item.setLocalProxyHost(proxyInfo.getLocalProxyHost());
+            item.setLocalProxyPort(proxyInfo.getLocalProxyPort());
+            return item;
+        }).collect(Collectors.toList());
+        RegisterRequestPacket requestPacket = new RegisterRequestPacket(registerItemList);
         ctx.channel().writeAndFlush(requestPacket);
         super.channelActive(ctx);
     }
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, RegisterResponsePacket responsePacket) throws Exception {
-        Bootstrap localBootstrap = new io.netty.bootstrap.Bootstrap();
-        NioEventLoopGroup group = new NioEventLoopGroup();
+        BridgeClient localClient = new BridgeClient();
+        localClient.connect(responsePacket.getLocalProxyHost(), responsePacket.getLocalProxyPort(), new ChannelInitializer<SocketChannel>() {
+            @Override
+            protected void initChannel(SocketChannel ch) throws Exception {
+                ChannelPipeline pipeline = ch.pipeline();
 
-        localBootstrap
-                .group(group)
-                .channel(NioSocketChannel.class)
-                .option(ChannelOption.SO_KEEPALIVE, true)
-                .handler(new ChannelInitializer<SocketChannel>() {
-                    @Override
-                    protected void initChannel(SocketChannel ch) throws Exception {
-                        ChannelPipeline pipeline = ch.pipeline();
+                pipeline.addLast(new ByteArrayDecoder());
+                pipeline.addLast(new ByteArrayEncoder());
+                pipeline.addLast(new DataHandler(responsePacket.getChannelId()));
 
-                        pipeline.addLast(new ByteArrayDecoder());
-                        pipeline.addLast(new ByteArrayEncoder());
-                        pipeline.addLast(new DataHandler(responsePacket.getChannelId()));
-
-                        ChannelUtil.getInstance().getChannelGroup().add(ch);
-                        ChannelUtil.getInstance().getChannelMap().put(responsePacket.getChannelId(), ch);
-                    }
-                }).connect("192.168.31.98", 5173).addListener(future -> {
-                    if (!future.isSuccess()) {
-                        future.cause().printStackTrace();
-                    }
-                }).sync();
+                ChannelUtil.getInstance().getChannelGroup().add(ch);
+                ChannelUtil.getInstance().getChannelMap().put(responsePacket.getChannelId(), ch);
+            }
+        });
     }
 
     @Override

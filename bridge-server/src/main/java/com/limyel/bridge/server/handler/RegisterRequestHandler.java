@@ -3,6 +3,7 @@ package com.limyel.bridge.server.handler;
 import com.limyel.bridge.common.protocol.request.RegisterRequestPacket;
 import com.limyel.bridge.common.utils.ChannelUtil;
 import com.limyel.bridge.server.handler.proxy.DataHandler;
+import com.limyel.bridge.server.net.BridgeServer;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInitializer;
@@ -19,34 +20,23 @@ import java.util.Date;
 public class RegisterRequestHandler extends SimpleChannelInboundHandler<RegisterRequestPacket> {
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, RegisterRequestPacket requestPacket) throws Exception {
-        ServerBootstrap proxyServerBootstrap = new ServerBootstrap();
-        NioEventLoopGroup bossGroup = new NioEventLoopGroup();
-        NioEventLoopGroup workerGroup = new NioEventLoopGroup();
+        requestPacket.getRegisterItemList().forEach(registerItem -> {
+            BridgeServer proxyServer = new BridgeServer();
+            proxyServer.bind(registerItem.getRemotePort(), new ChannelInitializer<SocketChannel>() {
+                @Override
+                protected void initChannel(SocketChannel ch) throws Exception {
+                    ChannelPipeline pipeline = ch.pipeline();
 
-        proxyServerBootstrap
-                .group(bossGroup, workerGroup)
-                .channel(NioServerSocketChannel.class)
-                .childHandler(new ChannelInitializer<SocketChannel>() {
-                    @Override
-                    protected void initChannel(SocketChannel ch) throws Exception {
-                        ch.pipeline().addLast(new ChannelInitializer<SocketChannel>() {
-                            @Override
-                            protected void initChannel(SocketChannel ch) throws Exception {
-                                ChannelPipeline pipeline = ch.pipeline();
+                    pipeline.addLast(new ByteArrayDecoder());
+                    pipeline.addLast(new ByteArrayEncoder());
+                    pipeline.addLast(new DataHandler());
 
-                                pipeline.addLast(new ByteArrayDecoder());
-                                pipeline.addLast(new ByteArrayEncoder());
-                                pipeline.addLast(new DataHandler());
+                    ChannelUtil.getInstance().getChannelGroup().add(ch);
+                    ChannelUtil.getInstance().getMap().put(ch.id().asLongText(), registerItem.getUri());
+                }
+            });
+        });
 
-                                ChannelUtil.getInstance().getChannelGroup().add(ch);
-                            }
-                        });
-                    }
-                }).bind(requestPacket.getRemotePort()).addListener(future -> {
-                    if (future.isSuccess()) {
-                        System.out.println(new Date() + ": 端口[" + requestPacket.getRemotePort() + "]绑定成功！");
-                    }
-                }).sync();
     }
 
     @Override

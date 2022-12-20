@@ -18,6 +18,7 @@ public class ChannelUtil {
     private ChannelUtil() {
         channelGroup = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
         channelMap = new HashMap<>();
+        map = new HashMap<>();
     }
 
     public static ChannelUtil getInstance() {
@@ -34,6 +35,8 @@ public class ChannelUtil {
     private ChannelGroup channelGroup;
 
     private Map<String, Channel> channelMap;
+
+    private Map<String, String> map;
 
     private Channel parentChannel;
 

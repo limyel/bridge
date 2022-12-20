@@ -31,6 +31,7 @@ public class BridgeClient {
                         }
                     })
                     .sync().channel();
+            System.out.println(channel.pipeline().names());
             return channel.closeFuture().addListener(future -> workerGroup.shutdownGracefully());
         } catch (InterruptedException e) {
             e.printStackTrace();
