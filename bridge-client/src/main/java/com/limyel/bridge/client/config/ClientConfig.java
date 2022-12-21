@@ -53,12 +53,12 @@ public class ClientConfig extends BridgeConfig {
                 // todo 异常
             }
             for (String infoItem : split) {
-                String host = infoItem.split(":")[1];
-                int port = Integer.parseInt(infoItem.split(":")[2]);
                 if (infoItem.contains(ConfigConstant.REMOTE_PROXY)) {
-                    proxyInfo.setRemoteProxyHost(host);
+                    int port = Integer.parseInt(infoItem.split(":")[1]);
                     proxyInfo.setRemoteProxyPort(port);
                 } else if (infoItem.contains(ConfigConstant.LOCAL_PROXY)) {
+                    String host = infoItem.split(":")[1];
+                    int port = Integer.parseInt(infoItem.split(":")[2]);
                     proxyInfo.setLocalProxyHost(host);
                     proxyInfo.setLocalProxyPort(port);
                 } else {

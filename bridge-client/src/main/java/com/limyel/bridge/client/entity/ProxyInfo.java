@@ -9,8 +9,6 @@ public class ProxyInfo {
 
     private int localProxyPort;
 
-    private String remoteProxyHost;
-
     private int remoteProxyPort;
 
 }
