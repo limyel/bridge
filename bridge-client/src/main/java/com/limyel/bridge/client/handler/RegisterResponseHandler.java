@@ -33,6 +33,7 @@ public class RegisterResponseHandler extends SimpleChannelInboundHandler<Registe
         }).collect(Collectors.toList());
         RegisterRequestPacket requestPacket = new RegisterRequestPacket(registerItemList);
         ctx.channel().writeAndFlush(requestPacket);
+
         super.channelActive(ctx);
     }
 

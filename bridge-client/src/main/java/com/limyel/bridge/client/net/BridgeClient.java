@@ -19,7 +19,12 @@ public class BridgeClient {
                     .group(workerGroup)
                     .channel(NioSocketChannel.class)
                     .option(ChannelOption.SO_KEEPALIVE, true)
-                    .handler(channelInitializer);
+                    .handler(new ChannelInitializer<SocketChannel>() {
+                        @Override
+                        protected void initChannel(SocketChannel ch) throws Exception {
+                            ch.pipeline().addLast(channelInitializer);
+                        }
+                    });
             Channel channel = bootstrap
                     .connect(host, port)
                     .addListener(future -> {
@@ -31,7 +36,6 @@ public class BridgeClient {
                         }
                     })
                     .sync().channel();
-            System.out.println(channel.pipeline().names());
             return channel.closeFuture().addListener(future -> workerGroup.shutdownGracefully());
         } catch (InterruptedException e) {
             e.printStackTrace();

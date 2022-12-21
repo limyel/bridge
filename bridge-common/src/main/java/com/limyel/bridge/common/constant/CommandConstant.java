@@ -15,4 +15,8 @@ public class CommandConstant {
     public static final byte CONNECT_REQUEST = 6;
 
     public static final byte CONNECT_RESPONSE = 7;
+
+    public static final byte DISCONNECT_REQUEST = 8;
+
+    public static final byte DISCONNECT_RESPONSE = 9;
 }

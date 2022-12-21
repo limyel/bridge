@@ -36,8 +36,15 @@ public class BridgeServer {
             serverBootstrap
                     .group(bossGroup, workerGroup)
                     .channel(NioServerSocketChannel.class)
+                    .option(ChannelOption.SO_BACKLOG, 1024)
                     .childOption(ChannelOption.SO_KEEPALIVE, true)
-                    .childHandler(channelInitializer);
+                    .childOption(ChannelOption.TCP_NODELAY, true)
+                    .childHandler(new ChannelInitializer<SocketChannel>() {
+                        @Override
+                        protected void initChannel(SocketChannel ch) throws Exception {
+                            ch.pipeline().addLast(channelInitializer);
+                        }
+                    });
 
             channel = serverBootstrap
                     .bind(port)
@@ -49,7 +56,6 @@ public class BridgeServer {
                             throw new RuntimeException();
                         }
                     }).sync().channel();
-            System.out.println(channel.pipeline().names());
             channel.closeFuture().addListener(future -> {
                 workerGroup.shutdownGracefully();
                 bossGroup.shutdownGracefully();

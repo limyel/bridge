@@ -11,7 +11,6 @@ import java.util.Arrays;
 public class DataHandler extends SimpleChannelInboundHandler<DataPacket> {
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, DataPacket dataPacket) throws Exception {
-        System.out.println(new String(dataPacket.getData(), StandardCharsets.UTF_8));
         ChannelUtil.getInstance().getChannelGroup().writeAndFlush(dataPacket.getData(), channel -> channel.id().asLongText().equals(dataPacket.getChannelId()));
     }
 

@@ -11,27 +11,28 @@ import java.util.Map;
 
 public class DataHandler extends ChannelInboundHandlerAdapter {
 
+    private String uri;
+
+    public DataHandler(String uri) {
+        this.uri = uri;
+    }
+
     // todo 激活，拆分？
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        System.out.println(this + " " + ctx.channel().id().asLongText());
         String channelId = ctx.channel().id().asLongText();
         RegisterResponsePacket responsePacket = new RegisterResponsePacket();
-        Map<String, String> map = ChannelUtil.getInstance().getMap();
-        String s = map.get(channelId);
-        responsePacket.setHostPort(ChannelUtil.getInstance().getMap().get(channelId));
+        responsePacket.setHostPort(uri);
         responsePacket.setChannelId(channelId);
 
         ChannelUtil.getInstance().getParentChannel().writeAndFlush(responsePacket);
 
-        super.channelActive(ctx);
     }
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         byte[] data = (byte[]) msg;
 
-        System.out.println(this + " " + ctx.channel().id().asLongText());
         ChannelId channelId = ctx.channel().id();
         DataPacket dataPacket = new DataPacket();
         dataPacket.setData(data);
@@ -45,4 +46,8 @@ public class DataHandler extends ChannelInboundHandlerAdapter {
         cause.printStackTrace();
     }
 
+    @Override
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        super.channelInactive(ctx);
+    }
 }

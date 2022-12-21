@@ -13,7 +13,7 @@ import java.util.Map;
 @Data
 public class ChannelUtil {
 
-    private static ChannelUtil INSTANCE;
+    private static volatile ChannelUtil INSTANCE = new ChannelUtil();
 
     private ChannelUtil() {
         channelGroup = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);

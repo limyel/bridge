@@ -4,6 +4,7 @@ import com.limyel.bridge.common.constant.CommandConstant;
 import com.limyel.bridge.common.constant.SerializeAlgorithmConstant;
 import com.limyel.bridge.common.protocol.AbstractPacket;
 import com.limyel.bridge.common.protocol.common.DataPacket;
+import com.limyel.bridge.common.protocol.request.DisconnectRequestPacket;
 import com.limyel.bridge.common.protocol.request.HeartBeatRequestPacket;
 import com.limyel.bridge.common.protocol.request.RegisterRequestPacket;
 import com.limyel.bridge.common.protocol.response.HeartBeatResponsePacket;
@@ -35,6 +36,7 @@ public class PacketCodec {
         packetTypeMap.put(CommandConstant.HEART_BEAT_REQUEST, HeartBeatRequestPacket.class);
         packetTypeMap.put(CommandConstant.HEART_BEAT_RESPONSE, HeartBeatResponsePacket.class);
         packetTypeMap.put(CommandConstant.DATA, DataPacket.class);
+        packetTypeMap.put(CommandConstant.DISCONNECT_REQUEST, DisconnectRequestPacket.class);
 
         serializerMap = new HashMap<>();
         serializerMap.put(JSONSerializer.INSTANCE.getSerializeAlgorithm(), JSONSerializer.INSTANCE);

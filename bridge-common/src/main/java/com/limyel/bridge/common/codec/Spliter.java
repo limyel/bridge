@@ -17,10 +17,10 @@ public class Spliter extends LengthFieldBasedFrameDecoder {
     @Override
     protected Object decode(ChannelHandlerContext ctx, ByteBuf in) throws Exception {
         // 屏蔽非本协议的客户端请求
-//        if (in.getInt(in.readerIndex()) != PacketCodec.MAGIC_NUMBER) {
-//            ctx.channel().close();
-//            return null;
-//        }
+        if (in.getInt(in.readerIndex()) != PacketCodec.MAGIC_NUMBER) {
+            ctx.channel().close();
+            return null;
+        }
         return super.decode(ctx, in);
     }
 }

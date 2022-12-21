@@ -28,9 +28,8 @@ public class Client {
 
                 pipeline.addLast(new RegisterResponseHandler());
                 pipeline.addLast(new DataHandler());
-                pipeline.addLast(new HeartBeatTimerHandler());
-
                 pipeline.addLast(new PacketEncoder());
+                pipeline.addLast(new HeartBeatTimerHandler());
 
                 ChannelUtil.getInstance().setParentChannel(ch);
             }

@@ -1,7 +1,9 @@
 package com.limyel.bridge.client.handler.local;
 
 import com.limyel.bridge.common.protocol.common.DataPacket;
+import com.limyel.bridge.common.protocol.request.DisconnectRequestPacket;
 import com.limyel.bridge.common.utils.ChannelUtil;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 
@@ -19,8 +21,6 @@ public class DataHandler extends ChannelInboundHandlerAdapter {
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         byte[] data = (byte[]) msg;
 
-        System.out.println(new String(data, StandardCharsets.UTF_8));
-
         DataPacket dataPacket = new DataPacket();
         dataPacket.setChannelId(this.channelId);
         dataPacket.setData(data);
@@ -30,7 +30,14 @@ public class DataHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        ChannelUtil.getInstance().getChannelGroup().close(channel -> channel.id().asLongText().equals(ctx.channel().id().asLongText()));
         cause.printStackTrace();
     }
 
+    @Override
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        DisconnectRequestPacket requestPacket = new DisconnectRequestPacket();
+        requestPacket.setChannelId(channelId);
+        ChannelUtil.getInstance().getParentChannel().writeAndFlush(requestPacket);
+    }
 }

@@ -7,6 +7,7 @@ import com.limyel.bridge.common.handler.IMIdleStateHandler;
 import com.limyel.bridge.common.utils.ChannelUtil;
 import com.limyel.bridge.server.config.ServerConfig;
 import com.limyel.bridge.server.handler.DataHandler;
+import com.limyel.bridge.server.handler.DisconnectRequestHandler;
 import com.limyel.bridge.server.handler.HeartBeatRequestHandler;
 import com.limyel.bridge.server.handler.RegisterRequestHandler;
 import com.limyel.bridge.server.net.BridgeServer;
@@ -22,6 +23,8 @@ public class Server {
         bridgeServer.bind(port, new ChannelInitializer<SocketChannel>() {
             @Override
             protected void initChannel(SocketChannel ch) throws Exception {
+                ChannelUtil.getInstance().setParentChannel(ch);
+
                 ChannelPipeline pipeline = ch.pipeline();
                 pipeline.addLast(new IMIdleStateHandler());
                 pipeline.addLast(new Spliter());
@@ -29,11 +32,10 @@ public class Server {
 
                 pipeline.addLast(new RegisterRequestHandler());
                 pipeline.addLast(new DataHandler());
+                pipeline.addLast(new DisconnectRequestHandler());
 
                 pipeline.addLast(new PacketEncoder());
                 pipeline.addLast(HeartBeatRequestHandler.getInstance());
-
-                ChannelUtil.getInstance().setParentChannel(ch);
             }
         });
     }

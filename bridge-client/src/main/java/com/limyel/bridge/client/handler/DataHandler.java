@@ -7,13 +7,12 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Map;
 
 public class DataHandler extends SimpleChannelInboundHandler<DataPacket> {
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, DataPacket dataPacket) throws Exception {
-        System.out.println(new String(dataPacket.getData(), StandardCharsets.UTF_8));
-        Map<String, Channel> channelMap = ChannelUtil.getInstance().getChannelMap();
         ChannelUtil.getInstance().getChannelMap().get(dataPacket.getChannelId()).writeAndFlush(dataPacket.getData());
     }
 
