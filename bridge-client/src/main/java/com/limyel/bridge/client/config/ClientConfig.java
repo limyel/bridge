@@ -22,8 +22,17 @@ public class ClientConfig extends BridgeConfig {
         if (INSTANCE == null) {
             synchronized (ClientConfig.class) {
                 if (INSTANCE == null) {
-                    String path = Optional.ofNullable(BridgeEnvironment.getInstance().getClientConfigPath())
-                            .orElse(DefaultClientConfig.CONFIG_PATH);
+                    INSTANCE = new ClientConfig(DefaultClientConfig.CONFIG_PATH);
+                }
+            }
+        }
+        return INSTANCE;
+    }
+
+    public static ClientConfig getInstance(String path) {
+        if (INSTANCE == null) {
+            synchronized (ClientConfig.class) {
+                if (INSTANCE == null) {
                     INSTANCE = new ClientConfig(path);
                 }
             }
