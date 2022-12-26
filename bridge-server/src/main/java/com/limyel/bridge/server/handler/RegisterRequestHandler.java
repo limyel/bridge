@@ -4,14 +4,11 @@ import com.limyel.bridge.common.protocol.request.RegisterRequestPacket;
 import com.limyel.bridge.common.utils.ChannelUtil;
 import com.limyel.bridge.server.handler.proxy.DataHandler;
 import com.limyel.bridge.server.net.BridgeServer;
-import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
-import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.bytes.ByteArrayDecoder;
 import io.netty.handler.codec.bytes.ByteArrayEncoder;
 

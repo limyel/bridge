@@ -36,6 +36,8 @@ public class DataHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        ChannelUtil.getInstance().getChannelMap().remove(channelId);
+
         DisconnectRequestPacket requestPacket = new DisconnectRequestPacket();
         requestPacket.setChannelId(channelId);
         ChannelUtil.getInstance().getParentChannel().writeAndFlush(requestPacket);
