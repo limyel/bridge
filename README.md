@@ -34,4 +34,14 @@ java -jar bridge-server.jar /home/limyel/config.properties
 
 ### 客户端
 
-客户端的配置文件机制和服务端差不多，默认读取 jar 包当前目录下的 `client.properties`。
+客户端的配置文件机制和服务端差不多，默认读取 jar 包当前目录下的 `client.properties`。客户端程序可配置选项如下：
+
+```properties
+# 服务端IP地址
+server-host=xxx.xxx.xxx.xxx
+# 服务端端口
+server-port=xxxx
+
+# 代理列表，remote——服务端对外打通的端口，local——本地代理的地址:端口
+proxy={remote:xxxxx, local:xxx.xxx.xxx.xxx:xxxx}, {remote:yyyyy, local:yyy.yyy.yyy.yyy:yyyy}
+```
