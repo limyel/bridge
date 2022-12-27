@@ -3,11 +3,8 @@ package com.limyel.bridge.client.handler.local;
 import com.limyel.bridge.common.protocol.common.DataPacket;
 import com.limyel.bridge.common.protocol.request.DisconnectRequestPacket;
 import com.limyel.bridge.common.utils.ChannelUtil;
-import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-
-import java.nio.charset.StandardCharsets;
 
 public class DataHandler extends ChannelInboundHandlerAdapter {
 

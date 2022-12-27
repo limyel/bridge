@@ -12,8 +12,6 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.bytes.ByteArrayDecoder;
 import io.netty.handler.codec.bytes.ByteArrayEncoder;
 
-import java.util.Date;
-
 public class RegisterRequestHandler extends SimpleChannelInboundHandler<RegisterRequestPacket> {
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, RegisterRequestPacket requestPacket) throws Exception {

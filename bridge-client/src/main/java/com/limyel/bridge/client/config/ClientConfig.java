@@ -3,7 +3,6 @@ package com.limyel.bridge.client.config;
 import com.limyel.bridge.client.constant.ConfigConstant;
 import com.limyel.bridge.client.entity.ProxyInfo;
 import com.limyel.bridge.common.config.BridgeConfig;
-import com.limyel.bridge.common.environment.BridgeEnvironment;
 
 import java.util.Arrays;
 import java.util.List;

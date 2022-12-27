@@ -2,13 +2,8 @@ package com.limyel.bridge.client.handler;
 
 import com.limyel.bridge.common.protocol.common.DataPacket;
 import com.limyel.bridge.common.utils.ChannelUtil;
-import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.Map;
 
 public class DataHandler extends SimpleChannelInboundHandler<DataPacket> {
     @Override
