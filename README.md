@@ -45,3 +45,16 @@ server-port=xxxx
 # 代理列表，remote——服务端对外打通的端口，local——本地代理的地址:端口
 proxy={remote:xxxxx, local:xxx.xxx.xxx.xxx:xxxx}, {remote:yyyyy, local:yyy.yyy.yyy.yyy:yyyy}
 ```
+
+启动时读取默认位置的配置文件：
+
+```bash
+java -jar bridge-client.jar
+```
+
+或者指定配置文件的位置：
+
+```bash
+java -jar bridge-client.jar /home/limyel/config.properties
+```
+
