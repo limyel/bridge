@@ -9,7 +9,8 @@ import java.util.concurrent.TimeUnit;
 
 public class IMIdleStateHandler extends IdleStateHandler {
 
-    private static final int READER_IDLE_TIME = 5;
+    // todo 写入配置文件
+    private static final int READER_IDLE_TIME = 90;
 
     public IMIdleStateHandler() {
         super(READER_IDLE_TIME, 0, 0, TimeUnit.SECONDS);
