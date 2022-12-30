@@ -1,5 +1,6 @@
 package com.limyel.bridge.server;
 
+import com.limyel.bridge.common.codec.PacketCodecHandler;
 import com.limyel.bridge.common.codec.PacketDecoder;
 import com.limyel.bridge.common.codec.PacketEncoder;
 import com.limyel.bridge.common.codec.Spliter;
@@ -28,13 +29,12 @@ public class Server {
                 ChannelPipeline pipeline = ch.pipeline();
                 pipeline.addLast(new IMIdleStateHandler());
                 pipeline.addLast(new Spliter());
-                pipeline.addLast(new PacketDecoder());
+                pipeline.addLast(PacketCodecHandler.getInstance());
 
                 pipeline.addLast(new RegisterRequestHandler());
                 pipeline.addLast(new DataHandler());
                 pipeline.addLast(new DisconnectRequestHandler());
 
-                pipeline.addLast(new PacketEncoder());
                 pipeline.addLast(HeartBeatRequestHandler.getInstance());
             }
         });

@@ -10,7 +10,7 @@ import java.util.List;
 public class PacketDecoder extends ByteToMessageDecoder {
     @Override
     protected void decode(ChannelHandlerContext channelHandlerContext, ByteBuf byteBuf, List<Object> list) throws Exception {
-        AbstractPacket packet = PacketCodec.INSTANCE.decode(byteBuf);
+        AbstractPacket packet = PacketCodec.getInstance().decode(byteBuf);
         list.add(packet);
     }
 }

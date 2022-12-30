@@ -12,13 +12,26 @@ import com.limyel.bridge.common.protocol.response.RegisterResponsePacket;
 import com.limyel.bridge.common.serializer.Serializer;
 import com.limyel.bridge.common.serializer.impl.JSONSerializer;
 import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelHandler;
 
 import java.util.HashMap;
 import java.util.Map;
 
+@ChannelHandler.Sharable
 public class PacketCodec {
 
-    public static final PacketCodec INSTANCE = new PacketCodec();
+    private static volatile PacketCodec INSTANCE = new PacketCodec();
+
+    public static PacketCodec getInstance() {
+        if (INSTANCE == null) {
+            synchronized (PacketCodec.class) {
+                if (INSTANCE == null) {
+                    INSTANCE = new PacketCodec();
+                }
+            }
+        }
+        return INSTANCE;
+    }
 
     /**
      * 魔数
