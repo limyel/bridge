@@ -7,14 +7,15 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelId;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 
-import java.util.Map;
-
 public class DataHandler extends ChannelInboundHandlerAdapter {
 
     private String uri;
 
-    public DataHandler(String uri) {
+    private ChannelHandlerContext ctx;
+
+    public DataHandler(String uri, ChannelHandlerContext ctx) {
         this.uri = uri;
+        this.ctx = ctx;
     }
 
     // todo 激活，拆分？
@@ -38,7 +39,7 @@ public class DataHandler extends ChannelInboundHandlerAdapter {
         dataPacket.setData(data);
         dataPacket.setChannelId(channelId.asLongText());
 
-        ChannelUtil.getInstance().getParentChannel().writeAndFlush(dataPacket);
+        this.ctx.channel().writeAndFlush(dataPacket);
     }
 
     @Override

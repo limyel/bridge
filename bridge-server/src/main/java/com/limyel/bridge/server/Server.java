@@ -24,8 +24,6 @@ public class Server {
         bridgeServer.bind(port, new ChannelInitializer<SocketChannel>() {
             @Override
             protected void initChannel(SocketChannel ch) throws Exception {
-                ChannelUtil.getInstance().setParentChannel(ch);
-
                 ChannelPipeline pipeline = ch.pipeline();
                 pipeline.addLast(new IMIdleStateHandler());
                 pipeline.addLast(new Spliter());
@@ -36,6 +34,8 @@ public class Server {
                 pipeline.addLast(new DisconnectRequestHandler());
 
                 pipeline.addLast(HeartBeatRequestHandler.getInstance());
+
+                ChannelUtil.getInstance().setParentChannel(ch);
             }
         });
     }

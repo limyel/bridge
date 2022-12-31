@@ -20,13 +20,12 @@ public class RegisterRequestHandler extends SimpleChannelInboundHandler<Register
             proxyServer.bind(registerItem.getRemotePort(), new ChannelInitializer<SocketChannel>() {
                 @Override
                 protected void initChannel(SocketChannel ch) throws Exception {
-                    ChannelUtil.getInstance().getChannelGroup().add(ch);
-                    ChannelUtil.getInstance().getMap().put(ch.id().asLongText(), registerItem.getUri());
-
                     ChannelPipeline pipeline = ch.pipeline();
                     pipeline.addLast(new ByteArrayDecoder());
-                    pipeline.addLast(new DataHandler(registerItem.getUri()));
+                    pipeline.addLast(new DataHandler(registerItem.getUri(), ctx));
                     pipeline.addLast(new ByteArrayEncoder());
+
+                    ChannelUtil.getInstance().getChannelGroup().add(ch);
                 }
             });
         });

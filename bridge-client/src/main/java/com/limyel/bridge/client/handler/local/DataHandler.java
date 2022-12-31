@@ -27,7 +27,6 @@ public class DataHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        ChannelUtil.getInstance().getChannelGroup().close(channel -> channel.id().asLongText().equals(ctx.channel().id().asLongText()));
         cause.printStackTrace();
     }
 
