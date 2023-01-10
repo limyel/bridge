@@ -59,7 +59,7 @@ public class BridgeServer {
                 // 10. 关闭线程池
                 workerGroup.shutdownGracefully();
                 bossGroup.shutdownGracefully();
-            }).sync();
+            });
 
         } catch (InterruptedException e) {
             e.printStackTrace();
