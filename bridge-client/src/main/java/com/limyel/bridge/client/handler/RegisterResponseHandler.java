@@ -1,61 +1,46 @@
 package com.limyel.bridge.client.handler;
 
-import com.limyel.bridge.client.config.ClientConfig;
-import com.limyel.bridge.client.entity.ProxyInfo;
-import com.limyel.bridge.client.handler.local.DataHandler;
 import com.limyel.bridge.client.net.BridgeClient;
-import com.limyel.bridge.common.protocol.request.RegisterItem;
-import com.limyel.bridge.common.protocol.request.RegisterRequestPacket;
-import com.limyel.bridge.common.protocol.response.RegisterResponsePacket;
-import com.limyel.bridge.common.utils.ChannelUtil;
-import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.*;
-import io.netty.channel.nio.NioEventLoopGroup;
+import com.limyel.bridge.protocol.packet.RegisterResponsePacket;
+import com.limyel.bridge.util.ChannelUtil;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.channel.group.ChannelGroup;
+import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.channel.socket.SocketChannel;
-import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.bytes.ByteArrayDecoder;
 import io.netty.handler.codec.bytes.ByteArrayEncoder;
+import io.netty.util.concurrent.GlobalEventExecutor;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
+/**
+ * @author limyel
+ * @since 2023-02-08 09:40
+ */
 public class RegisterResponseHandler extends SimpleChannelInboundHandler<RegisterResponsePacket> {
 
-    @Override
-    public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        List<ProxyInfo> proxyInfoList = ClientConfig.getInstance().getProxyInfo();
-        List<RegisterItem> registerItemList = proxyInfoList.stream().map(proxyInfo -> {
-            RegisterItem item = new RegisterItem();
-            item.setRemotePort(proxyInfo.getRemoteProxyPort());
-            item.setLocalProxyHost(proxyInfo.getLocalProxyHost());
-            item.setLocalProxyPort(proxyInfo.getLocalProxyPort());
-            return item;
-        }).collect(Collectors.toList());
-        RegisterRequestPacket requestPacket = new RegisterRequestPacket(registerItemList);
-        ctx.channel().writeAndFlush(requestPacket);
-
-        super.channelActive(ctx);
-    }
+    private ChannelGroup channelGroup = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, RegisterResponsePacket responsePacket) throws Exception {
-        BridgeClient localClient = new BridgeClient();
-        localClient.connect(responsePacket.getLocalProxyHost(), responsePacket.getLocalProxyPort(), new ChannelInitializer<SocketChannel>() {
+    protected void channelRead0(ChannelHandlerContext ctx, RegisterResponsePacket msg) throws Exception {
+        // todo 校验是否注册成功
+        BridgeClient proxy = new BridgeClient();
+        proxy.connect("192.168.31.98", Integer.parseInt(msg.getUri().split(":")[1]), new ChannelInitializer<SocketChannel>() {
             @Override
             protected void initChannel(SocketChannel ch) throws Exception {
-                ChannelPipeline pipeline = ch.pipeline();
-                pipeline.addLast(new ByteArrayDecoder());
-                pipeline.addLast(new ByteArrayEncoder());
-                pipeline.addLast(new DataHandler(responsePacket.getChannelId()));
+                ch.pipeline().addLast(new ByteArrayDecoder());
+                ch.pipeline().addLast(new ByteArrayEncoder());
+                ch.pipeline().addLast(new ProxyHandler(msg.getUri(), msg.getChannelId()));
 
-                ChannelUtil.getInstance().getChannelMap().put(responsePacket.getChannelId(), ch);
+                ChannelUtil.getInstance().getChannelMap().put(msg.getChannelId(), ch);
+                channelGroup.add(ch);
             }
         });
     }
 
     @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        cause.printStackTrace();
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        channelGroup.close();
     }
-
 }
