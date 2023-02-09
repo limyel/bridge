@@ -25,6 +25,8 @@ public class PacketCodec {
         packetTypeMap.put(Command.PROXY_DATA_RESPONSE, ProxyDataResponsePacket.class);
         packetTypeMap.put(Command.INACTIVE_REQUEST, InactiveRequestPacket.class);
         packetTypeMap.put(Command.CONNECTED, ConnectedPacket.class);
+        packetTypeMap.put(Command.HEART_BEAT_REQUEST, HeartBeatRequestPacket.class);
+        packetTypeMap.put(Command.HEART_BEAT_RESPONSE, HeartBeatResponsePacket.class);
 
         serializerMap = new HashMap<>();
         Serializer serializer = Serializer.DEFAULT;

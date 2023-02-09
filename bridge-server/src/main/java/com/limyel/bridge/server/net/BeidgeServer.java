@@ -37,6 +37,7 @@ public class BeidgeServer {
                     .channel(NioServerSocketChannel.class)
                     // 5. 设置参数
                     .option(ChannelOption.SO_BACKLOG, 1024)
+                    .option(ChannelOption.SO_REUSEADDR, true)
                     .childOption(ChannelOption.SO_KEEPALIVE, true)
                     .childOption(ChannelOption.TCP_NODELAY, true)
                     // 6. 设置Handler（略）

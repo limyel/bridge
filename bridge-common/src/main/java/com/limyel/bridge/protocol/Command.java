@@ -17,4 +17,8 @@ public class Command {
     public static final Byte INACTIVE_REQUEST = 5;
 
     public static final Byte CONNECTED = 6;
+
+    public static final Byte HEART_BEAT_REQUEST = 7;
+
+    public static final Byte HEART_BEAT_RESPONSE = 8;
 }

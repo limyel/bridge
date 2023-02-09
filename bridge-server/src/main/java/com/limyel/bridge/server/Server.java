@@ -2,12 +2,10 @@ package com.limyel.bridge.server;
 
 import com.limyel.bridge.codec.PacketCodecHandler;
 import com.limyel.bridge.codec.Spliter;
+import com.limyel.bridge.handler.BridgeIdleStateHandler;
 import com.limyel.bridge.handler.ExceptionHandler;
 import com.limyel.bridge.server.config.ServerConfig;
-import com.limyel.bridge.server.handler.InactiveRequestHandler;
-import com.limyel.bridge.server.handler.ProxyDataRequestHandler;
-import com.limyel.bridge.server.handler.ProxyHandler;
-import com.limyel.bridge.server.handler.RegisterRequestHandler;
+import com.limyel.bridge.server.handler.*;
 import com.limyel.bridge.server.net.BeidgeServer;
 import com.limyel.bridge.util.ChannelUtil;
 import io.netty.channel.ChannelInitializer;
@@ -38,6 +36,7 @@ public class Server {
             @Override
             protected void initChannel(SocketChannel ch) throws Exception {
                 ChannelPipeline pipeline = ch.pipeline();
+                pipeline.addLast(new BridgeIdleStateHandler());
                 pipeline.addLast(new Spliter());
                 pipeline.addLast(PacketCodecHandler.getInstance());
 
@@ -45,6 +44,7 @@ public class Server {
                 pipeline.addLast(new RegisterRequestHandler(serverConfig.getPassword()));
                 pipeline.addLast(new InactiveRequestHandler());
 
+                pipeline.addLast(HeartBeatRequestHandler.getInstance());
                 pipeline.addLast(new ExceptionHandler());
 
             }

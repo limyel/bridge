@@ -2,12 +2,14 @@ package com.limyel.bridge.client;
 
 import com.limyel.bridge.client.config.ClientConfig;
 import com.limyel.bridge.client.handler.ClientHandler;
+import com.limyel.bridge.client.handler.HeartBeatTimerHandler;
 import com.limyel.bridge.client.handler.ProxyDataResponseHandler;
 import com.limyel.bridge.client.handler.ConnectedHandler;
 import com.limyel.bridge.client.net.BridgeClient;
 import com.limyel.bridge.codec.PacketDecoder;
 import com.limyel.bridge.codec.PacketEncoder;
 import com.limyel.bridge.codec.Spliter;
+import com.limyel.bridge.handler.BridgeIdleStateHandler;
 import com.limyel.bridge.handler.ExceptionHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
@@ -38,6 +40,7 @@ public class Client {
             @Override
             protected void initChannel(SocketChannel ch) throws Exception {
                 ChannelPipeline pipeline = ch.pipeline();
+                pipeline.addLast(new BridgeIdleStateHandler());
                 pipeline.addLast(new Spliter());
                 pipeline.addLast(new PacketDecoder());
                 pipeline.addLast(new PacketEncoder());
@@ -46,6 +49,7 @@ public class Client {
                 pipeline.addLast(new ConnectedHandler());
                 pipeline.addLast(new ProxyDataResponseHandler());
 
+                pipeline.addLast(new HeartBeatTimerHandler());
                 pipeline.addLast(new ExceptionHandler());
             }
         });
