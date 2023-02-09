@@ -15,7 +15,7 @@ import java.util.List;
 @Data
 public class RegisterRequestPacket extends Packet {
 
-    private ProxyInfo proxyInfo;
+    private List<ProxyInfo> proxyInfoList;
 
     @Override
     public Byte getCommand() {

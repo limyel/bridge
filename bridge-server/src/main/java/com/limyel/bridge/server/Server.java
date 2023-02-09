@@ -3,6 +3,7 @@ package com.limyel.bridge.server;
 import com.limyel.bridge.codec.PacketCodecHandler;
 import com.limyel.bridge.codec.Spliter;
 import com.limyel.bridge.handler.ExceptionHandler;
+import com.limyel.bridge.server.config.ServerConfig;
 import com.limyel.bridge.server.handler.InactiveRequestHandler;
 import com.limyel.bridge.server.handler.ProxyDataRequestHandler;
 import com.limyel.bridge.server.handler.ProxyHandler;
@@ -20,11 +21,18 @@ import io.netty.channel.socket.SocketChannel;
 public class Server {
 
     public static void main(String[] args) {
-        start();
+        ServerConfig serverConfig;
+        if (args.length == 1) {
+            serverConfig = new ServerConfig(args[0]);
+        } else {
+            serverConfig = new ServerConfig();
+        }
+
+        start(serverConfig);
     }
 
-    public static void start() {
-        int port = 9876;
+    public static void start(ServerConfig serverConfig) {
+        int port = serverConfig.getPort();
         BeidgeServer beidgeServer = new BeidgeServer();
         beidgeServer.bind(port, new ChannelInitializer<SocketChannel>() {
             @Override

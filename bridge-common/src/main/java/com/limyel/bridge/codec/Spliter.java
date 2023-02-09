@@ -21,6 +21,7 @@ public class Spliter extends LengthFieldBasedFrameDecoder {
     @Override
     protected Object decode(ChannelHandlerContext ctx, ByteBuf in) throws Exception {
         if (in.getShort(in.readerIndex()) != PacketCodec.MAGIC_NUMBER) {
+            System.out.println("魔数不匹配，关闭连接");
             ctx.channel().close();
             return null;
         }

@@ -6,21 +6,24 @@ import com.limyel.bridge.util.ChannelUtil;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 
+import java.util.List;
+
 /**
  * @author limyel
  * @since 2023-02-07 22:49
  */
 public class ClientHandler extends ChannelInboundHandlerAdapter {
 
+    private List<ProxyInfo> proxyInfoList;
+
+    public ClientHandler(List<ProxyInfo> proxyInfoList) {
+        this.proxyInfoList = proxyInfoList;
+    }
+
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        ProxyInfo proxyInfo = new ProxyInfo();
-        proxyInfo.setProxyHost("192.168.31.98");
-        proxyInfo.setProxyPort(22);
-        proxyInfo.setRemotePort(10022);
-
         RegisterRequestPacket packet = new RegisterRequestPacket();
-        packet.setProxyInfo(proxyInfo);
+        packet.setProxyInfoList(proxyInfoList);
 
         System.out.println("ClientHandler " + ctx.channel().id().asLongText());
 

@@ -27,18 +27,19 @@ public class RegisterRequestHandler extends SimpleChannelInboundHandler<Register
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, RegisterRequestPacket msg) throws Exception {
-        System.out.println(msg.getProxyInfo().getProxyHost());
-        ProxyInfo proxyInfo = msg.getProxyInfo();
-        BeidgeServer proxyServer = new BeidgeServer();
-        proxyServer.bind(proxyInfo.getRemotePort(), new ChannelInitializer<SocketChannel>() {
-            @Override
-            protected void initChannel(SocketChannel ch) throws Exception {
-                ch.pipeline().addLast(new ByteArrayDecoder());
-                ch.pipeline().addLast(new ByteArrayEncoder());
-                ch.pipeline().addLast(new ProxyHandler(proxyInfo.getUri(), ctx.channel().id().asLongText()));
+        for (ProxyInfo proxyInfo: msg.getProxyInfoList()) {
+            System.out.println(proxyInfo.getUri());
+            BeidgeServer proxyServer = new BeidgeServer();
+            proxyServer.bind(proxyInfo.getRemotePort(), new ChannelInitializer<SocketChannel>() {
+                @Override
+                protected void initChannel(SocketChannel ch) throws Exception {
+                    ch.pipeline().addLast(new ByteArrayDecoder());
+                    ch.pipeline().addLast(new ByteArrayEncoder());
+                    ch.pipeline().addLast(new ProxyHandler(proxyInfo.getUri(), ctx.channel().id().asLongText()));
 
-                ChannelUtil.getInstance().getChannelGroup().add(ch);
-            }
-        });
+                    ChannelUtil.getInstance().getChannelGroup().add(ch);
+                }
+            });
+        }
     }
 }

@@ -71,7 +71,6 @@ class DiscardServerHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
-        System.out.println(ctx.channel().remoteAddress().toString());
         ctx.write(msg);
         ctx.flush();
     }

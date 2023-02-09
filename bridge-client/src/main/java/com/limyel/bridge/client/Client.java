@@ -1,5 +1,6 @@
 package com.limyel.bridge.client;
 
+import com.limyel.bridge.client.config.ClientConfig;
 import com.limyel.bridge.client.handler.ClientHandler;
 import com.limyel.bridge.client.handler.ProxyDataResponseHandler;
 import com.limyel.bridge.client.handler.RegisterResponseHandler;
@@ -20,13 +21,19 @@ import io.netty.channel.socket.SocketChannel;
  */
 public class Client {
     public static void main(String[] args) {
-        start();
+        ClientConfig clientConfig;
+        if (args.length == 1) {
+            clientConfig = ClientConfig.getInstance(args[0]);
+        } else {
+            clientConfig = ClientConfig.getInstance();
+        }
+
+        start(clientConfig);
     }
 
-    public static void start() {
-        int port = 9876;
-        String host = "106.55.131.8";
-//        String host = "192.168.31.98";
+    public static void start(ClientConfig clientConfig) {
+        int port = clientConfig.getServerPort();
+        String host = clientConfig.getServerHost();
 
         BridgeClient client = new BridgeClient();
         client.connect(host, port, new ChannelInitializer<SocketChannel>() {
@@ -37,7 +44,7 @@ public class Client {
                 pipeline.addLast(new PacketDecoder());
                 pipeline.addLast(new PacketEncoder());
 
-                pipeline.addLast(new ClientHandler());
+                pipeline.addLast(new ClientHandler(clientConfig.getProxyInfo()));
                 pipeline.addLast(new RegisterResponseHandler());
                 pipeline.addLast(new ProxyDataResponseHandler());
 

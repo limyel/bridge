@@ -37,7 +37,6 @@ public class PacketCodecHandler extends MessageToMessageCodec<ByteBuf, Packet> {
     protected void encode(ChannelHandlerContext channelHandlerContext, Packet packet, List<Object> list) throws Exception {
         ByteBuf byteBuf = channelHandlerContext.channel().alloc().ioBuffer();
         PacketCodec.getInstance().encode(byteBuf, packet);
-        System.out.println(byteBuf.getInt(byteBuf.readerIndex()));
         list.add(byteBuf);
     }
 
