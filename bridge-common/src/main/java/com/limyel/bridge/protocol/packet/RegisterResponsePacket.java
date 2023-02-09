@@ -12,9 +12,9 @@ import lombok.EqualsAndHashCode;
 @Data
 public class RegisterResponsePacket extends Packet {
 
-    private String uri;
+    private String msg;
 
-    private String channelId;
+    private boolean success;
 
     @Override
     public Byte getCommand() {

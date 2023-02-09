@@ -79,4 +79,8 @@ public class ClientConfig extends BridgeConfig {
             return proxyInfo;
         }).collect(Collectors.toList());
     }
+
+    public String getPassword() {
+        return properties.getProperty(ConfigConstant.PASSWORD);
+    }
 }

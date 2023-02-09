@@ -8,4 +8,6 @@ public class ConfigConstant {
 
     public static final String PORT = "port";
 
+    public static final String PASSWORD = "password";
+
 }

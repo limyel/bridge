@@ -1,26 +1,23 @@
 package com.limyel.bridge.protocol.packet;
 
-import com.limyel.bridge.entity.ProxyInfo;
 import com.limyel.bridge.protocol.Command;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import java.util.List;
-
 /**
  * @author limyel
- * @since 2023-02-07 22:22
+ * @since 2023-02-09 14:35
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class RegisterRequestPacket extends Packet {
+public class ConnectedPacket extends Packet {
 
-    private List<ProxyInfo> proxyInfoList;
+    private String uri;
 
-    private String password;
+    private String channelId;
 
     @Override
     public Byte getCommand() {
-        return Command.REGISTER_REQUEST;
+        return Command.CONNECTED;
     }
 }

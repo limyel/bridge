@@ -16,14 +16,18 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
 
     private List<ProxyInfo> proxyInfoList;
 
-    public ClientHandler(List<ProxyInfo> proxyInfoList) {
+    private String password;
+
+    public ClientHandler(List<ProxyInfo> proxyInfoList, String password) {
         this.proxyInfoList = proxyInfoList;
+        this.password = password;
     }
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         RegisterRequestPacket packet = new RegisterRequestPacket();
         packet.setProxyInfoList(proxyInfoList);
+        packet.setPassword(password);
 
         System.out.println("ClientHandler " + ctx.channel().id().asLongText());
 

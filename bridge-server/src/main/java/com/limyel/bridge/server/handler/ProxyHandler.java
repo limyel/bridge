@@ -1,5 +1,6 @@
 package com.limyel.bridge.server.handler;
 
+import com.limyel.bridge.protocol.packet.ConnectedPacket;
 import com.limyel.bridge.protocol.packet.ProxyDataResponsePacket;
 import com.limyel.bridge.protocol.packet.RegisterResponsePacket;
 import com.limyel.bridge.util.ChannelUtil;
@@ -24,7 +25,7 @@ public class ProxyHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         System.out.println("ProxyHandler Active " + ctx.channel().id().asLongText());
-        RegisterResponsePacket packet = new RegisterResponsePacket();
+        ConnectedPacket packet = new ConnectedPacket();
         packet.setUri(uri);
         packet.setChannelId(ctx.channel().id().asLongText());
         ChannelUtil.getInstance().getChannelMap().get(channelId).writeAndFlush(packet);

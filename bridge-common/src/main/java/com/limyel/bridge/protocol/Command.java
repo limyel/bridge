@@ -15,4 +15,6 @@ public class Command {
     public static final Byte PROXY_DATA_RESPONSE = 4;
 
     public static final Byte INACTIVE_REQUEST = 5;
+
+    public static final Byte CONNECTED = 6;
 }

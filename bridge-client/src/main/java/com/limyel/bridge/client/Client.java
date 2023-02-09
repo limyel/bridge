@@ -3,14 +3,12 @@ package com.limyel.bridge.client;
 import com.limyel.bridge.client.config.ClientConfig;
 import com.limyel.bridge.client.handler.ClientHandler;
 import com.limyel.bridge.client.handler.ProxyDataResponseHandler;
-import com.limyel.bridge.client.handler.RegisterResponseHandler;
+import com.limyel.bridge.client.handler.ConnectedHandler;
 import com.limyel.bridge.client.net.BridgeClient;
-import com.limyel.bridge.codec.PacketCodecHandler;
 import com.limyel.bridge.codec.PacketDecoder;
 import com.limyel.bridge.codec.PacketEncoder;
 import com.limyel.bridge.codec.Spliter;
 import com.limyel.bridge.handler.ExceptionHandler;
-import com.limyel.bridge.util.ChannelUtil;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
@@ -44,8 +42,8 @@ public class Client {
                 pipeline.addLast(new PacketDecoder());
                 pipeline.addLast(new PacketEncoder());
 
-                pipeline.addLast(new ClientHandler(clientConfig.getProxyInfo()));
-                pipeline.addLast(new RegisterResponseHandler());
+                pipeline.addLast(new ClientHandler(clientConfig.getProxyInfo(), clientConfig.getPassword()));
+                pipeline.addLast(new ConnectedHandler());
                 pipeline.addLast(new ProxyDataResponseHandler());
 
                 pipeline.addLast(new ExceptionHandler());

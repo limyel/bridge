@@ -42,7 +42,7 @@ public class Server {
                 pipeline.addLast(PacketCodecHandler.getInstance());
 
                 pipeline.addLast(new ProxyDataRequestHandler());
-                pipeline.addLast(new RegisterRequestHandler());
+                pipeline.addLast(new RegisterRequestHandler(serverConfig.getPassword()));
                 pipeline.addLast(new InactiveRequestHandler());
 
                 pipeline.addLast(new ExceptionHandler());

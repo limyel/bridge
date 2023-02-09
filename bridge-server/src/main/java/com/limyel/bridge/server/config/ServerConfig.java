@@ -26,4 +26,8 @@ public class ServerConfig extends BridgeConfig {
         return Integer.parseInt(port);
     }
 
+    public String getPassword() {
+        return properties.getProperty(ConfigConstant.PASSWORD);
+    }
+
 }
