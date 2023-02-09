@@ -4,9 +4,11 @@ import com.limyel.bridge.client.handler.ClientHandler;
 import com.limyel.bridge.client.handler.ProxyDataResponseHandler;
 import com.limyel.bridge.client.handler.RegisterResponseHandler;
 import com.limyel.bridge.client.net.BridgeClient;
+import com.limyel.bridge.codec.PacketCodecHandler;
 import com.limyel.bridge.codec.PacketDecoder;
 import com.limyel.bridge.codec.PacketEncoder;
 import com.limyel.bridge.codec.Spliter;
+import com.limyel.bridge.handler.ExceptionHandler;
 import com.limyel.bridge.util.ChannelUtil;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
@@ -23,7 +25,8 @@ public class Client {
 
     public static void start() {
         int port = 9876;
-        String host = "192.168.31.98";
+        String host = "106.55.131.8";
+//        String host = "192.168.31.98";
 
         BridgeClient client = new BridgeClient();
         client.connect(host, port, new ChannelInitializer<SocketChannel>() {
@@ -38,7 +41,7 @@ public class Client {
                 pipeline.addLast(new RegisterResponseHandler());
                 pipeline.addLast(new ProxyDataResponseHandler());
 
-                ChannelUtil.getInstance().setParentChannel(ch);
+                pipeline.addLast(new ExceptionHandler());
             }
         });
     }

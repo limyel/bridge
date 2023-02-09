@@ -1,8 +1,8 @@
 package com.limyel.bridge.client.handler;
 
 import com.limyel.bridge.entity.ProxyInfo;
-import com.limyel.bridge.protocol.packet.ProxyDataRequestPacket;
 import com.limyel.bridge.protocol.packet.RegisterRequestPacket;
+import com.limyel.bridge.util.ChannelUtil;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 
@@ -16,8 +16,8 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         ProxyInfo proxyInfo = new ProxyInfo();
         proxyInfo.setProxyHost("192.168.31.98");
-        proxyInfo.setProxyPort(3306);
-        proxyInfo.setRemotePort(4306);
+        proxyInfo.setProxyPort(22);
+        proxyInfo.setRemotePort(10022);
 
         RegisterRequestPacket packet = new RegisterRequestPacket();
         packet.setProxyInfo(proxyInfo);
@@ -31,6 +31,8 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        System.out.println("fsdjflksd");
+        ChannelUtil.getInstance().getParentChannelMap().remove(ctx.channel().id().asLongText());
+        System.out.println("Client Inactive " + ctx.channel().id().asLongText());
     }
+
 }

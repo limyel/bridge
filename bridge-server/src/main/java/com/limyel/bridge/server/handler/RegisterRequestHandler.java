@@ -19,6 +19,13 @@ import io.netty.handler.codec.bytes.ByteArrayEncoder;
 public class RegisterRequestHandler extends SimpleChannelInboundHandler<RegisterRequestPacket> {
 
     @Override
+    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        ChannelUtil.getInstance().getChannelMap().put(ctx.channel().id().asLongText(), ctx.channel());
+
+        super.channelActive(ctx);
+    }
+
+    @Override
     protected void channelRead0(ChannelHandlerContext ctx, RegisterRequestPacket msg) throws Exception {
         System.out.println(msg.getProxyInfo().getProxyHost());
         ProxyInfo proxyInfo = msg.getProxyInfo();
@@ -28,7 +35,7 @@ public class RegisterRequestHandler extends SimpleChannelInboundHandler<Register
             protected void initChannel(SocketChannel ch) throws Exception {
                 ch.pipeline().addLast(new ByteArrayDecoder());
                 ch.pipeline().addLast(new ByteArrayEncoder());
-                ch.pipeline().addLast(new ProxyHandler(proxyInfo.getUri()));
+                ch.pipeline().addLast(new ProxyHandler(proxyInfo.getUri(), ctx.channel().id().asLongText()));
 
                 ChannelUtil.getInstance().getChannelGroup().add(ch);
             }

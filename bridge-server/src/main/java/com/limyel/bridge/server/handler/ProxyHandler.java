@@ -14,16 +14,20 @@ public class ProxyHandler extends ChannelInboundHandlerAdapter {
 
     private String uri;
 
-    public ProxyHandler(String uri) {
+    private String channelId;
+
+    public ProxyHandler(String uri, String channelId) {
         this.uri = uri;
+        this.channelId = channelId;
     }
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        System.out.println("ProxyHandler Active " + ctx.channel().id().asLongText());
         RegisterResponsePacket packet = new RegisterResponsePacket();
         packet.setUri(uri);
         packet.setChannelId(ctx.channel().id().asLongText());
-        ChannelUtil.getInstance().getParentChannel().writeAndFlush(packet);
+        ChannelUtil.getInstance().getChannelMap().get(channelId).writeAndFlush(packet);
     }
 
     @Override
@@ -35,13 +39,8 @@ public class ProxyHandler extends ChannelInboundHandlerAdapter {
         packet.setChannelId(ctx.channel().id().asLongText());
         packet.setData(data);
 
-        System.out.println("ProxyHandler " + ctx.channel().id().asLongText());
-        ChannelUtil.getInstance().getParentChannel().writeAndFlush(packet);
-    }
-
-    @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        cause.printStackTrace();
+        System.out.println("ProxyHandler Read " + ctx.channel().id().asLongText());
+        ChannelUtil.getInstance().getChannelMap().get(channelId).writeAndFlush(packet);
     }
 
     @Override

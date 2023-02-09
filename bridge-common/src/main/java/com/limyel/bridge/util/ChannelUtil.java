@@ -21,6 +21,7 @@ public class ChannelUtil {
     private ChannelUtil() {
         channelGroup = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
         channelMap = new HashMap<>();
+        parentChannelMap = new HashMap<>();
         map = new HashMap<>();
     }
 
@@ -39,8 +40,8 @@ public class ChannelUtil {
 
     private Map<String, Channel> channelMap;
 
-    private Map<String, String> map;
+    private Map<String, Channel> parentChannelMap;
 
-    private Channel parentChannel;
+    private Map<String, String> map;
 
 }

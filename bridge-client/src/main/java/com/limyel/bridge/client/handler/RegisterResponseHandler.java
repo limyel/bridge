@@ -1,6 +1,7 @@
 package com.limyel.bridge.client.handler;
 
 import com.limyel.bridge.client.net.BridgeClient;
+import com.limyel.bridge.handler.ExceptionHandler;
 import com.limyel.bridge.protocol.packet.RegisterResponsePacket;
 import com.limyel.bridge.util.ChannelUtil;
 import io.netty.channel.Channel;
@@ -26,14 +27,17 @@ public class RegisterResponseHandler extends SimpleChannelInboundHandler<Registe
     protected void channelRead0(ChannelHandlerContext ctx, RegisterResponsePacket msg) throws Exception {
         // todo 校验是否注册成功
         BridgeClient proxy = new BridgeClient();
-        proxy.connect("192.168.31.98", Integer.parseInt(msg.getUri().split(":")[1]), new ChannelInitializer<SocketChannel>() {
+        proxy.connect(msg.getUri().split(":")[0], Integer.parseInt(msg.getUri().split(":")[1]), new ChannelInitializer<SocketChannel>() {
             @Override
             protected void initChannel(SocketChannel ch) throws Exception {
                 ch.pipeline().addLast(new ByteArrayDecoder());
                 ch.pipeline().addLast(new ByteArrayEncoder());
-                ch.pipeline().addLast(new ProxyHandler(msg.getUri(), msg.getChannelId()));
+                ch.pipeline().addLast(new ProxyHandler(msg.getUri(), msg.getChannelId(), ctx.channel().id().asLongText()));
+
+                ch.pipeline().addLast(new ExceptionHandler());
 
                 ChannelUtil.getInstance().getChannelMap().put(msg.getChannelId(), ch);
+                ChannelUtil.getInstance().getParentChannelMap().put(ctx.channel().id().asLongText(), ctx.channel());
                 channelGroup.add(ch);
             }
         });
@@ -41,6 +45,7 @@ public class RegisterResponseHandler extends SimpleChannelInboundHandler<Registe
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        System.out.println("Client Inactive " + ctx.channel().id().asLongText());
         channelGroup.close();
     }
 }

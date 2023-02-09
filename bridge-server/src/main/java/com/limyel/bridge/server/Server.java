@@ -2,8 +2,10 @@ package com.limyel.bridge.server;
 
 import com.limyel.bridge.codec.PacketCodecHandler;
 import com.limyel.bridge.codec.Spliter;
+import com.limyel.bridge.handler.ExceptionHandler;
 import com.limyel.bridge.server.handler.InactiveRequestHandler;
 import com.limyel.bridge.server.handler.ProxyDataRequestHandler;
+import com.limyel.bridge.server.handler.ProxyHandler;
 import com.limyel.bridge.server.handler.RegisterRequestHandler;
 import com.limyel.bridge.server.net.BeidgeServer;
 import com.limyel.bridge.util.ChannelUtil;
@@ -35,7 +37,8 @@ public class Server {
                 pipeline.addLast(new RegisterRequestHandler());
                 pipeline.addLast(new InactiveRequestHandler());
 
-                ChannelUtil.getInstance().setParentChannel(ch);
+                pipeline.addLast(new ExceptionHandler());
+
             }
         });
     }

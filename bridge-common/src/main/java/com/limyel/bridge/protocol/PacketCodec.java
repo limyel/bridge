@@ -13,7 +13,7 @@ import java.util.Map;
  */
 public class PacketCodec {
 
-    public static final int MAGIC_NUMBER = 0x12345678;
+    public static final int MAGIC_NUMBER = 0x594;
 
     private static volatile PacketCodec INSTANCE = new PacketCodec();
 
@@ -48,7 +48,7 @@ public class PacketCodec {
         // 1. 序列化 Java 对象
         byte[] bytes = Serializer.DEFAULT.serialize(packet);
 
-        byteBuf.writeInt(MAGIC_NUMBER);
+        byteBuf.writeShort(MAGIC_NUMBER);
         byteBuf.writeByte(packet.getVersion());
         byteBuf.writeByte(Serializer.DEFAULT.getSerializerAlgorithm());
         byteBuf.writeByte(packet.getCommand());
@@ -58,7 +58,7 @@ public class PacketCodec {
 
     public Packet decode(ByteBuf byteBuf) {
         // 跳过魔数
-        byteBuf.skipBytes(4);
+        byteBuf.skipBytes(2);
 
         // 跳过版本号
         byteBuf.skipBytes(1);

@@ -16,13 +16,7 @@ public class ProxyDataResponseHandler extends SimpleChannelInboundHandler<ProxyD
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, ProxyDataResponsePacket msg) throws Exception {
-        Map<String, Channel> channelMap = ChannelUtil.getInstance().getChannelMap();
         Channel channel = ChannelUtil.getInstance().getChannelMap().get(msg.getChannelId());
         channel.writeAndFlush(msg.getData());
-    }
-
-    @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        cause.printStackTrace();
     }
 }

@@ -29,6 +29,7 @@ public class JSONSerializer implements Serializer {
         try {
             return objectMapper.writeValueAsBytes(object);
         } catch (JsonProcessingException e) {
+            e.printStackTrace();
             // todo 异常处理
             throw new RuntimeException(e);
         }
@@ -39,6 +40,7 @@ public class JSONSerializer implements Serializer {
         try {
             return objectMapper.readValue(bytes, clazz);
         } catch (IOException e) {
+            e.printStackTrace();
             // todo 异常处理
             throw new RuntimeException(e);
         }

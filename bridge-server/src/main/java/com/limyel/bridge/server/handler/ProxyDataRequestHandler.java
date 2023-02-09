@@ -19,8 +19,4 @@ public class ProxyDataRequestHandler extends SimpleChannelInboundHandler<ProxyDa
         ChannelUtil.getInstance().getChannelGroup().writeAndFlush(msg.getData(), channel -> channel.id().asLongText().equals(msg.getChannelId()));
     }
 
-    @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        cause.printStackTrace();
-    }
 }

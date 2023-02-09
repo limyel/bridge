@@ -11,7 +11,7 @@ import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
  */
 public class Spliter extends LengthFieldBasedFrameDecoder {
 
-    private static final int LENGTH_FIELD_OFFSET = 7;
+    private static final int LENGTH_FIELD_OFFSET = 5;
     private static final int LENGTH_FIELD_LENGTH = 4;
 
     public Spliter() {
@@ -20,7 +20,7 @@ public class Spliter extends LengthFieldBasedFrameDecoder {
 
     @Override
     protected Object decode(ChannelHandlerContext ctx, ByteBuf in) throws Exception {
-        if (in.getInt(in.readerIndex()) != PacketCodec.MAGIC_NUMBER) {
+        if (in.getShort(in.readerIndex()) != PacketCodec.MAGIC_NUMBER) {
             ctx.channel().close();
             return null;
         }
