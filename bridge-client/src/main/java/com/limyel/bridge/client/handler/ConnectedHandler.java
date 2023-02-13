@@ -15,6 +15,8 @@ import io.netty.handler.codec.bytes.ByteArrayDecoder;
 import io.netty.handler.codec.bytes.ByteArrayEncoder;
 import io.netty.util.concurrent.GlobalEventExecutor;
 
+import java.util.Date;
+
 /**
  * @author limyel
  * @since 2023-02-08 09:40
@@ -45,7 +47,7 @@ public class ConnectedHandler extends SimpleChannelInboundHandler<ConnectedPacke
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        System.out.println("Client Inactive " + ctx.channel().id().asLongText());
+        System.out.println(new Date() + "Client Inactive " + ctx.channel().id().asLongText());
         channelGroup.close();
     }
 }

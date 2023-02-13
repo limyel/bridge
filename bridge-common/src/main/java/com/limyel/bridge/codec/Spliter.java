@@ -5,6 +5,8 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 
+import java.util.Date;
+
 /**
  * @author limyel
  * @since 2023-02-07 17:08
@@ -21,8 +23,9 @@ public class Spliter extends LengthFieldBasedFrameDecoder {
     @Override
     protected Object decode(ChannelHandlerContext ctx, ByteBuf in) throws Exception {
         if (in.getShort(in.readerIndex()) != PacketCodec.MAGIC_NUMBER) {
-            System.out.println("魔数不匹配，关闭连接");
-            ctx.channel().close();
+            System.out.println(new Date() + "魔数不匹配，关闭连接");
+            // todo 魔数bug
+//            ctx.channel().close();
             return null;
         }
 

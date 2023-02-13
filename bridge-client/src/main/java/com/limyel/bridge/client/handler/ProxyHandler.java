@@ -5,6 +5,8 @@ import com.limyel.bridge.protocol.packet.ProxyDataRequestPacket;
 import com.limyel.bridge.util.ChannelUtil;
 import io.netty.channel.*;
 
+import java.util.Date;
+
 /**
  * @author limyel
  * @since 2023-02-08 09:43
@@ -31,13 +33,13 @@ public class ProxyHandler extends ChannelInboundHandlerAdapter {
         packet.setUri(uri);
         packet.setChannelId(remoteChannelId);
 
-        System.out.println("ProxyHandler " + ctx.channel().id().asLongText());
+        System.out.println(new Date() + "ProxyHandler " + ctx.channel().id().asLongText());
         ChannelUtil.getInstance().getParentChannelMap().get(parentChannelId).writeAndFlush(packet);
     }
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        System.out.println("ProxyHandler Inactive " + ctx.channel().id().asLongText());
+        System.out.println(new Date() + "ProxyHandler Inactive " + ctx.channel().id().asLongText());
         ChannelUtil.getInstance().getChannelMap().remove(remoteChannelId);
         InactiveRequestPacket packet = new InactiveRequestPacket();
         packet.setChannelId(remoteChannelId);

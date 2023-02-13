@@ -6,6 +6,7 @@ import com.limyel.bridge.util.ChannelUtil;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -29,7 +30,7 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
         packet.setProxyInfoList(proxyInfoList);
         packet.setPassword(password);
 
-        System.out.println("ClientHandler " + ctx.channel().id().asLongText());
+        System.out.println(new Date() + "ClientHandler " + ctx.channel().id().asLongText());
 
         ctx.writeAndFlush(packet);
 
@@ -39,7 +40,7 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         ChannelUtil.getInstance().getParentChannelMap().remove(ctx.channel().id().asLongText());
-        System.out.println("Client Inactive " + ctx.channel().id().asLongText());
+        System.out.println(new Date() + "Client Inactive " + ctx.channel().id().asLongText());
     }
 
 }
